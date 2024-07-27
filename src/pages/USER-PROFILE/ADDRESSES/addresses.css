@@ -1,0 +1,50 @@
+.addresses-sub-con{
+    border: 1px solid black;
+    width: 70%;
+    min-height: 3rem;
+    margin:2rem auto;
+    border-radius: 10px;
+     
+}
+.addresses-sub-con div{
+    padding:0.5rem 2rem;
+    font-family: Inter;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 38.73px;
+    text-align: left;
+
+    
+}
+.add-head{
+    font-family: Inter;
+font-size: 32px;
+font-weight: 400;
+line-height: 38.73px;
+letter-spacing: 0.1em;
+text-align: center;
+margin: 3rem;
+
+}
+.add-address{
+    width: 40%;
+    border: 1PX solid black;
+    font-family: Inter;
+    font-size: 42.8px;
+    font-weight: 400;
+    line-height: 51.8px;
+    text-align: center;
+   margin: 2rem auto;
+   color: #FF0000;
+   padding: 5px 2rem;
+   border-radius: 10px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding-left: 5rem;
+
+}
+.add-address img{
+    width: 2rem;
+    height: 2rem;
+}

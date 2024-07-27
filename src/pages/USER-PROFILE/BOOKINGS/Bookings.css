@@ -1,0 +1,11 @@
+.bookings{
+    font-family: Inter;
+    font-size: 35px;
+    font-weight: 500;
+    line-height: 58.09px;
+    text-align: left;
+    padding: 1rem 3rem;
+}
+.book-sub-con{
+    border: 1px solid black;
+}

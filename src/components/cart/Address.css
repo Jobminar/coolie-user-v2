@@ -1,0 +1,240 @@
+.address-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border: 1px solid #e6f7d4;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    width: 88%;
+    margin: auto;
+    text-align: left;
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.radio-group p {
+    color: #093ecf;
+    margin: 0;
+    padding-right: 10px;
+}
+
+.radio-group label {
+    color: #000000;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.radio-group input {
+    margin-right: 5px;
+}
+
+.location-option {
+    color: #093ecf;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.location-option svg {
+    margin-right: 5px;
+}
+
+.add-new-address {
+    cursor: pointer;
+    color: #093ecf;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.add-new-address svg {
+    margin-right: 5px;
+}
+
+.toggle-saved-addresses {
+    cursor: pointer;
+    color: #093ecf;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.toggle-saved-addresses span {
+    margin-left: 5px;
+}
+
+.address-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.address-form input {
+    flex: 1 1 48%;
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+.address-form input.full-width {
+    flex: 1 1 100%;
+}
+
+.address-form input:focus {
+    border-color: #0988cf;
+    outline: none;
+}
+
+.schedule-visit-btn {
+    background-color: #0988cf;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+.schedule-visit-btn:hover {
+    background-color: #086fa1;
+}
+
+.price-info {
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.price-info .item-count {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.price-info .total-price {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.save-address-btn {
+    cursor: pointer;
+    background-color: #039f54;
+    color: #ffffff;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 2rem;
+}
+
+.save-address-btn span {
+    margin-left: 0.5rem;
+    margin-top: 0.1rem;
+}
+
+.saved-address {
+    background-color: #ffffff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.saved-address p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
+}
+
+.saved-address .light-grey {
+    color: #888;
+    font-size: 12px;
+}
+
+.saved-address input[type="radio"] {
+    margin-top: 5px;
+}
+
+.input-error {
+    border-color: red;
+}
+
+.error-message {
+    position: absolute;
+    bottom: -15px;
+    left: 0;
+    color: red;
+    font-size: 12px;
+}
+
+.address-totals {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+    padding: 0 0.1rem
+}
+
+.address-totals-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.address-totals-info h5 {
+    margin-bottom: 0;
+    color: #666;
+}
+
+.address-totals-info p {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-top: 0.1rem;
+}
+
+.address-totals-button {
+    display: flex;
+    justify-content: start;
+}
+
+.go-to-address-btn {
+    background-color: #0988cf;
+    color: white;
+    font-weight: 600;
+    padding: 0.8rem 1.2rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 0.1rem
+}
+
+.go-to-address-btn:hover {
+    background-color: #086fa1;
+}

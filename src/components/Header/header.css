@@ -1,0 +1,243 @@
+.main-h {
+    margin: 0;
+    padding: 0;
+}
+
+.f-h {
+    height: 2.5rem;
+    background-color: #FFB800;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4rem;
+}
+
+.f-h-icons {
+    display: flex;
+    column-gap: 2rem;
+    height: 2.5rem;
+    align-items: center;
+}
+
+.f-h-icons img {
+    width: 20px;
+    height: 20px;
+}
+
+.f-h-icons p {
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14.06px;
+    text-align: left;
+}
+
+.f-h-last-icons {
+    display: flex;
+    align-items: center;
+    column-gap: 1.5rem;
+}
+
+.f-h-last-icons img {
+    width: 25px;
+    height: 25px;
+}
+
+.s-h {
+    min-height: 6rem;
+    padding: 0 3rem;
+    display: grid;
+    grid-template-columns: 15% 80%;
+    box-shadow: 0px 4px 4px 0px #00000040;
+}
+
+.s-h-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.s-h-logo img {
+    width: 6rem;
+    height: 6rem;
+}
+
+.books-button {
+    width: 7rem;
+    background-color: #CD2E28;
+    height: 2.5rem;
+    border-radius: 30px;
+    border: none;
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18.75px;
+    letter-spacing: -0.05em;
+    text-align: center;
+    color: white;
+}
+
+.books-button:hover {
+    cursor: pointer;
+}
+
+.callus {
+    font-family: Roboto;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 18.75px;
+    letter-spacing: -0.03em;
+    text-align: left;
+    color: #039F54;
+}
+
+.callus:hover {
+    cursor: pointer;
+}
+
+.r-pro {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 18.75px;
+    letter-spacing: -0.03em;
+    text-align: left;
+}
+
+.r-pro:hover {
+    cursor: pointer;
+}
+
+.book-button {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 18.75px;
+    letter-spacing: -0.05em;
+    text-align: center;
+    color: white;
+}
+
+.s-h-bottom {
+    display: grid;
+    grid-template-columns: 20% 65% 20%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.s-h-s {
+    display: grid;
+    justify-content: space-between;
+    grid-template-columns: 30% 45% 20%;
+    align-items: center;
+}
+
+.location {
+    display: flex;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: left;
+    padding: 0 1rem;
+    border: 1px solid rgba(227, 229, 255, 0.95);
+    color: black;
+    border-radius: 10px;
+    column-gap: 0.5rem;
+}
+
+.location img {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.location input {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #000;
+    border: 1px solid transparent;
+    outline: none;
+    width: 100%;
+}
+
+.location input:focus {
+    border: none;
+}
+
+.search-header input {
+    margin: 0;
+    padding: 0 0 10px;
+    width: 95%;
+    height: 2.0rem;
+    border: none;
+    border: 1px solid rgba(227, 229, 255, 0.95);
+    padding-left: 1rem;
+    border-radius: 10px;
+}
+
+.search-header input:focus {
+    border: none;
+    outline: none;
+}
+
+/* User icon styling */
+.user-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 10px;
+    margin-left: 10px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.user-icon:hover {
+    background-color: #f0f0f0;
+}
+
+/* Modal styling */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close-button:hover {
+    color: black;
+}

@@ -1,0 +1,209 @@
+.schedule-container {
+    padding: 0.9375rem;
+    /* 15px */
+    background-color: #ffffff;
+    max-width: 25rem;
+    /* 400px */
+    margin: auto;
+    border-bottom-left-radius: 0.5rem;
+    /* 8px */
+    border-bottom-right-radius: 0.5rem;
+    /* 8px */
+    border: 0.0625rem solid #e6f7d4;
+    /* 1px */
+    box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.1);
+    /* 1px 2px */
+    z-index: 10;
+    /* Ensure it stays above other content */
+}
+
+h3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.9375rem;
+    /* 15px */
+    font-size: 0.75rem;
+    /* 12px */
+}
+
+h3 select {
+    padding: 0.234375rem 0.46875rem;
+    /* 3.75px 7.5px */
+    font-size: 0.75rem;
+    /* 12px */
+    border-radius: 0.3125rem;
+    /* 5px */
+    border: 0.0625rem solid #ccc;
+    /* 1px */
+    background-color: #ffffff;
+    margin-right: 0.46875rem;
+    /* 7.5px */
+}
+
+.date-selector,
+.time-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.9375rem;
+    /* 15px */
+}
+
+.dates {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    /* 7.5px */
+    width: 90%;
+    margin: 0.5rem;
+    overflow: hidden;
+    height: 3.25rem;
+    font-weight: 600;
+}
+
+.date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 0.6rem 0.49375rem;
+    /* 9.5px */
+    text-align: center;
+    background-color: #f0f0f0;
+    border-radius: 0.3125rem;
+    /* 5px */
+    cursor: pointer;
+    border: 0.0625rem solid #ccc;
+    /* 1px */
+    font-size: 0.6625rem;
+
+    /* 9px */
+}
+
+.date.active {
+    border: 0.09375rem solid #ccc;
+    /* 1.5px */
+    background-color: #e6f7d4;
+}
+
+.date .day {
+    font-weight: bold;
+    margin-bottom: 0.234375rem;
+    /* 3.75px */
+    font-size: 0.5625rem;
+    /* 9px */
+}
+
+.arrow-btn {
+
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    /* 7.5px */
+    border-radius: 50%;
+    font-size: 0.5625rem;
+    margin: 0;
+    /* 9px */
+}
+
+.arrow-btn:disabled {
+    background: #ddd;
+    cursor: not-allowed;
+}
+
+.time-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.46875rem;
+    /* 7.5px */
+}
+
+.time input {
+    margin-right: 0.15625rem;
+    /* 2.5px */
+}
+
+.time label {
+    font-size: 0.65rem;
+    /* 6px */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15625rem;
+    /* 2.5px */
+    border-radius: 0.3125rem;
+    /* 5px */
+    background-color: #f0f0f0;
+    border: 0.0625rem solid #ccc;
+    /* 1px */
+    text-align: center;
+    height: 1.5rem;
+    /* Fixed height */
+    width: 5rem;
+    /* Fixed width */
+
+    /* Smooth transition for the transform */
+}
+
+.time.active {
+    background-color: transparent;
+    color: blue;
+    border-color: blue;
+    padding: 0;
+    width: 5rem;
+
+    /* Move slightly to the left (4.8px) */
+}
+
+.confirm-payment-btn {
+    background-color: #0988cf;
+    color: white;
+    border: none;
+    padding: 0.46875rem 0.9375rem;
+    /* 7.5px 15px */
+    border-radius: 0.3125rem;
+    /* 5px */
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.confirm-payment-btn:hover {
+    background-color: #007bb5;
+}
+
+.time-selector label {
+    font-size: 0.65rem;
+    /* 6px */
+}
+
+
+.scheduled-date {
+    font-size: 0.75rem;
+    color: #039F54;
+    position: relative;
+    left: 12.5%;
+}
+
+.editing-btn {
+    color: #0000ff;
+    background-color: transparent;
+    border: none;
+    font-size: 0.8rem;
+}
+
+
+.apply-to-all-checkbox {
+    color: #0000ff;
+    background-color: transparent;
+    border: none;
+    margin: 0.8rem 0.1rem;
+}
+
+.apply-to-all-checkbox span {
+    color: #0000ff;
+    font-size: 0.8rem;
+}
