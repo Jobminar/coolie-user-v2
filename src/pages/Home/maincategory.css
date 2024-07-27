@@ -2,7 +2,7 @@
     /* border: 1px solid black; */
     border-radius: 10px;
     min-height: 10rem;
-    background-color: rgba(227, 229, 255, 0.35);
+    background-color: transparent;
     /* Adjusted to only affect background color opacity */
     display: flex;
     justify-content: space-evenly;
@@ -13,7 +13,6 @@
     padding: 2rem 3rem;
     margin: 2rem 0rem;
 }
-
 
 .sub-cat-con {
     display: flex;
@@ -26,13 +25,12 @@
 
 .sub-cat-con:hover {
     cursor: pointer;
-
 }
 
 .main-cat-img {
     width: 6rem;
     height: 6rem;
-    border-radius: 50%;
+    /* border-radius: 50%; */
     background-color: white;
     /* border: 1px solid black; */
     display: flex;
@@ -40,6 +38,11 @@
     align-items: center;
 }
 
+.main-cat-img img {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: none;
+}
 
 .sub-cat-con p {
     font-family: Roboto;
@@ -48,26 +51,12 @@
     line-height: 18.75px;
     text-align: left;
     color: #292C31;
-
+    transition: color 0.3s ease;
 }
 
-.main-cat-img img {
-    width: 3.5rem;
-    height: 3.5rem;
-    /* modified by sameer 26-07-2024 */
-    border-radius: none
+.sub-cat-con:hover p {
+    color: red;
 }
-
-.main-cat-img:hover {
-    /* modified by sameer 26-07-2024 */
-    background-color: transparent;
-}
-
-.main-cat-img img:hover {
-    width: 6.5rem;
-    height: 6.5rem;
-}
-
 
 .coveredyou-con {
     /* border: 1px solid black; */
@@ -93,7 +82,6 @@
     letter-spacing: -0.05em;
     text-align: left;
     color: #0000008C;
-
 }
 
 .covered-you-main-flow {
@@ -135,7 +123,6 @@
     letter-spacing: 1px;
     text-align: left;
     color: white;
-
 }
 
 .coveredyou-content p {
@@ -146,7 +133,6 @@
     text-align: left;
     color: white;
     /* margin: 0px */
-
 }
 
 .covered-book-button {
@@ -195,7 +181,6 @@
     border-radius: 10px;
     /* Apply border-radius to the pseudo-element */
 }
-
 
 .second-sub {
     background-image: url(../../assets/images/covered-you-2-bgimg.png);
@@ -263,7 +248,6 @@
     /* Apply border-radius to the pseudo-element */
 }
 
-
 /* How it works */
 .how-it-works-main-con {
     /* border: 1px solid black; */
@@ -280,7 +264,6 @@
     font-weight: 700;
     line-height: 37.5px;
     text-align: left;
-
 }
 
 .above-headddig span {
@@ -299,9 +282,7 @@
     grid-template-columns: 20% 20% 20% 20% 12%;
     justify-content: space-evenly;
     align-items: center;
-
 }
-
 
 .how-sub-flow {
     /* border: 1px solid black; */
@@ -323,13 +304,11 @@
 .how-image:hover {
     background-color: #FFB800;
     cursor: pointer;
-
 }
 
 .how-image img {
     width: 4rem;
     height: 4rem;
-
 }
 
 .final-flow {

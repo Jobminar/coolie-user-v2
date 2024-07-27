@@ -6,7 +6,7 @@ import dropdown from "../../assets/images/dropdown.png";
 import CartSummary from "../../components/cart/CartSummary";
 import { CartContext } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
-import LoginComponent from "../../components/LoginComponent"; // Import LoginComponent
+import LoginComponent from "../../components/LoginComponent";
 import { TailSpin } from "react-loader-spinner";
 
 const Services = () => {
@@ -21,49 +21,13 @@ const Services = () => {
   } = useContext(CategoryContext);
 
   const { handleCart } = useContext(CartContext);
-  const { isAuthenticated } = useAuth(); // Get authentication status
+  const { isAuthenticated } = useAuth();
 
-  const [data, setData] = useState([]);
-  const [subData, setSubData] = useState([]);
-  const [serviceData, setServiceData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [descriptionVisibility, setDescriptionVisibility] = useState({});
-  const [isLoginVisible, setLoginVisible] = useState(false); // State to manage login modal visibility
-
-  useEffect(() => {
-    if (categoryData) {
-      setLoading(true);
-      const selectedCategory = categoryData.find(
-        (category) => category._id === selectedCategoryId,
-      );
-      if (selectedCategory && selectedCategory.subcategories) {
-        setData(selectedCategory.subcategories);
-      } else {
-        setData([]);
-      }
-      setLoading(false);
-    }
-  }, [categoryData, selectedCategoryId]);
-
-  useEffect(() => {
-    if (subCategoryData) {
-      setSubData(subCategoryData);
-    }
-  }, [subCategoryData]);
-
-  useEffect(() => {
-    if (servicesData) {
-      setServiceData(servicesData);
-      console.log(servicesData, "service data in sub page");
-    }
-  }, [servicesData]);
+  const [isLoginVisible, setLoginVisible] = useState(false);
 
   if (error) {
     return <div className="error">Error: {error}</div>;
-  }
-
-  if (loading || !categoryData) {
-    return <div className="loading">Loading...</div>;
   }
 
   const toggleDescription = (serviceId) => {
@@ -75,7 +39,7 @@ const Services = () => {
 
   const handleAddToCart = (serviceId, categoryId, subCategoryId) => {
     if (!isAuthenticated) {
-      setLoginVisible(true); // Show login modal if not authenticated
+      setLoginVisible(true);
       return;
     }
     handleCart(serviceId, categoryId, subCategoryId);
@@ -85,18 +49,89 @@ const Services = () => {
     setLoginVisible(false);
   };
 
+  const displayServices = () => {
+    if (servicesData && servicesData.length === 0) {
+      return (
+        <div className="sub-category-service-item">
+          <div className="service-content">
+            <h5>No services found for this subcategory.</h5>
+          </div>
+        </div>
+      );
+    } else if (servicesData) {
+      return servicesData.map((service) => (
+        <div key={service._id} className="sub-category-service-item">
+          <div className="service-main-head">
+            <div className="service-icon-container">
+              <img
+                src={`https://coolie1-dev.s3.ap-south-1.amazonaws.com/${service.subCategoryId.imageKey}`}
+                alt={service.subCategoryId.name}
+                className="tab-image"
+              />
+            </div>
+            <div className="service-content">
+              <h5>{service.name}</h5>
+              {service.serviceVariants.map((variant) => (
+                <div key={variant._id} className="service-variant">
+                  <p>
+                    ({variant.min} to {variant.max} {variant.metric})
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div
+              className="dropdown"
+              onClick={() => toggleDescription(service._id)}
+            >
+              <img src={dropdown} alt="dropdown" />
+            </div>
+          </div>
+          <div
+            className="description"
+            style={{
+              display: descriptionVisibility[service._id] ? "block" : "none",
+            }}
+          >
+            {service.description}
+          </div>
+          <div className="price">
+            {service.serviceVariants.map((variant) => (
+              <div key={variant._id}>
+                <p>&#8377; {variant.price}</p>
+              </div>
+            ))}
+            <button
+              onClick={() =>
+                handleAddToCart(
+                  service._id,
+                  service.categoryId._id,
+                  service.subCategoryId._id,
+                )
+              }
+            >
+              ADD
+            </button>
+          </div>
+        </div>
+      ));
+    } else {
+      return <div className="loading">No Services Available for this</div>;
+    }
+  };
+
   return (
     <div className="services">
       <ScrollableTabs />
-
       <div className="services-cart-display">
         <div className="subcat-services-dispaly">
           <div className="sub-category-display">
-            {subData.length > 0 ? (
-              subData.map((subCat) => (
+            {subCategoryData && subCategoryData.length > 0 ? (
+              subCategoryData.map((subCat) => (
                 <div
                   key={subCat._id}
-                  className="sub-category-item"
+                  className={`sub-category-item ${
+                    selectedSubCategoryId === subCat._id ? "active" : ""
+                  }`}
                   onClick={() => setSelectedSubCategoryId(subCat._id)}
                 >
                   <div className="subcat-icon-container">
@@ -106,93 +141,23 @@ const Services = () => {
                       className="tab-image"
                     />
                   </div>
-                  <p>{subCat.name}</p>
+                  <p
+                    className={
+                      selectedSubCategoryId === subCat._id ? "active" : ""
+                    }
+                  >
+                    {subCat.name}
+                  </p>
                 </div>
               ))
             ) : (
               <p>No additional subcategories available.</p>
             )}
           </div>
-
-          <div className="services-display">
-            {serviceData.map((service) => (
-              <div key={service._id} className="sub-category-service-item">
-                <div className="service-main-head">
-                  <div className="service-icon-container">
-                    <img
-                      src={`https://coolie1-dev.s3.ap-south-1.amazonaws.com/${service.subCategoryId.imageKey}`}
-                      alt={service.subCategoryId.name}
-                      className="tab-image"
-                    />
-                  </div>
-                  <div className="service-content">
-                    <h5>{service.name}</h5>
-                    {service.serviceVariants.map((variant) => (
-                      <div key={variant._id} className="service-variant">
-                        <p>
-                          ({variant.min} to {variant.max} {variant.metric})
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                  <div
-                    className="dropdown"
-                    onClick={() => toggleDescription(service._id)}
-                  >
-                    <img src={dropdown} alt="dropdown" />
-                  </div>
-                </div>
-                <div
-                  className="description"
-                  style={{
-                    display: descriptionVisibility[service._id]
-                      ? "block"
-                      : "none",
-                  }}
-                >
-                  {service.description}
-                </div>
-                <div className="price">
-                  <p></p>
-                  {service.serviceVariants.map((variant) => (
-                    <div key={variant._id}>
-                      <p>&#8377; {variant.price}</p>
-                    </div>
-                  ))}
-                  <button
-                    onClick={() =>
-                      handleAddToCart(
-                        service._id,
-                        service.categoryId._id,
-                        service.subCategoryId._id,
-                      )
-                    }
-                  >
-                    ADD
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <div className="services-display">{displayServices()}</div>
         </div>
-        <div className="cart-display">
-          <CartSummary />
-        </div>
+        <CartSummary />
       </div>
-      {loading && (
-        <div className="loading-overlay">
-          <TailSpin
-            height="80"
-            width="80"
-            color="#4fa94d"
-            ariaLabel="tail-spin-loading"
-            radius="1"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-          />
-        </div>
-      )}
       {isLoginVisible && (
         <div className="modalOverlay" onClick={closeModal}>
           <div className="modalContent" onClick={(e) => e.stopPropagation()}>
