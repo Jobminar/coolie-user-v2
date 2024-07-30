@@ -136,7 +136,7 @@ const Services = () => {
                 >
                   <div className="subcat-icon-container">
                     <img
-                      src={`https://coolie1-dev.s3.ap-south-1.amazonaws.com/${subCat.imageKey}`}
+                      src={subCat.imageKey}
                       alt={subCat.name}
                       className="tab-image"
                     />
