@@ -64,7 +64,7 @@ const Services = () => {
           <div className="service-main-head">
             <div className="service-icon-container">
               <img
-                src={`https://coolie1-dev.s3.ap-south-1.amazonaws.com/${service.subCategoryId.imageKey}`}
+                src={service.subCategoryId.imageKey}
                 alt={service.subCategoryId.name}
                 className="tab-image"
               />
