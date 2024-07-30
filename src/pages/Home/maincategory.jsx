@@ -36,7 +36,7 @@ const Maincategory = () => {
                 }}
               >
                 <img
-                  src={`https://coolie1-dev.s3.ap-south-1.amazonaws.com/${item.imageKey}`}
+                  src={item.imageKey}
                   alt={item.name}
                 />
               </div>
