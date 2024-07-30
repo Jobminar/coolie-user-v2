@@ -108,7 +108,7 @@ const ScrollableTabs = () => {
           >
             <div className="tab-image-container">
               <img
-                src={`https://coolie1-dev.s3.ap-south-1.amazonaws.com/${category.imageKey}`}
+                src={category.imageKey}
                 alt={category.name}
                 className="tab-image"
               />
