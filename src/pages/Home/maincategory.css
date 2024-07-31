@@ -1,9 +1,7 @@
 .main-category-con {
-    /* border: 1px solid black; */
     border-radius: 10px;
     min-height: 10rem;
     background-color: transparent;
-    /* Adjusted to only affect background color opacity */
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -19,7 +17,6 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    /* border: 1px solid black; */
     width: 10rem;
 }
 
@@ -30,18 +27,18 @@
 .main-cat-img {
     width: 6rem;
     height: 6rem;
-    /* border-radius: 50%; */
     background-color: white;
-    /* border: 1px solid black; */
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: transform 0.3s ease;
 }
 
 .main-cat-img img {
     width: 3.5rem;
     height: 3.5rem;
     border-radius: none;
+    transition: transform 0.3s ease;
 }
 
 .sub-cat-con p {
@@ -58,8 +55,11 @@
     color: red;
 }
 
+.sub-cat-con:hover .main-cat-img img {
+    transform: scale(2);
+}
+
 .coveredyou-con {
-    /* border: 1px solid black; */
     min-height: 10rem;
     padding: 2rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -90,7 +90,6 @@
     margin: 10px 0px;
     overflow-x: auto;
     scroll-snap-type: x;
-    /* border: 1px solid black; */
     scroll-behavior: smooth;
     column-gap: 2rem;
 }
@@ -103,7 +102,6 @@
     padding-left: 1rem;
     height: 12rem;
     min-width: 25rem;
-    /* border: 1px solid black; */
     border-radius: 10px;
     display: grid;
     grid-template-columns: 60% 40%;
@@ -132,7 +130,6 @@
     line-height: 22px;
     text-align: left;
     color: white;
-    /* margin: 0px */
 }
 
 .covered-book-button {
@@ -152,15 +149,11 @@
 .first-sub {
     background-image: url(../../assets/images/covered-you-1-bgimg.png);
     background-size: cover;
-    /* Makes the image cover the entire element */
     background-position: center;
-    /* Centers the image */
     background-repeat: no-repeat;
-    /* Prevents the image from repeating */
     position: relative;
     border-radius: 10px;
     overflow: hidden;
-    /* Ensures the background image is clipped by border-radius */
 }
 
 .first-sub::before {
@@ -175,25 +168,18 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0.77;
-    /* Adjust opacity here */
     z-index: -1;
-    /* Places the pseudo-element behind content */
     border-radius: 10px;
-    /* Apply border-radius to the pseudo-element */
 }
 
 .second-sub {
     background-image: url(../../assets/images/covered-you-2-bgimg.png);
     background-size: cover;
-    /* Makes the image cover the entire element */
     background-position: center;
-    /* Centers the image */
     background-repeat: no-repeat;
-    /* Prevents the image from repeating */
     position: relative;
     border-radius: 10px;
     overflow: hidden;
-    /* Ensures the background image is clipped by border-radius */
 }
 
 .second-sub::before {
@@ -208,25 +194,18 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0.77;
-    /* Adjust opacity here */
     z-index: -1;
-    /* Places the pseudo-element behind content */
     border-radius: 10px;
-    /* Apply border-radius to the pseudo-element */
 }
 
 .third-sub {
     background-image: url(../../assets/images/covered-you-2-bgimg.png);
     background-size: cover;
-    /* Makes the image cover the entire element */
     background-position: center;
-    /* Centers the image */
     background-repeat: no-repeat;
-    /* Prevents the image from repeating */
     position: relative;
     border-radius: 10px;
     overflow: hidden;
-    /* Ensures the background image is clipped by border-radius */
 }
 
 .third-sub::before {
@@ -241,16 +220,11 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0.77;
-    /* Adjust opacity here */
     z-index: -1;
-    /* Places the pseudo-element behind content */
     border-radius: 10px;
-    /* Apply border-radius to the pseudo-element */
 }
 
-/* How it works */
 .how-it-works-main-con {
-    /* border: 1px solid black; */
     min-height: 10rem;
     padding: 2rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -277,7 +251,6 @@
 }
 
 .how-main-flow {
-    /* border: 1px solid black; */
     display: grid;
     grid-template-columns: 20% 20% 20% 20% 12%;
     justify-content: space-evenly;
@@ -285,7 +258,6 @@
 }
 
 .how-sub-flow {
-    /* border: 1px solid black; */
     display: flex;
     justify-content: space-around;
     align-items: center;
