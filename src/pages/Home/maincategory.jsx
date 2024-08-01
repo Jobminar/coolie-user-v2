@@ -28,17 +28,13 @@ const Maincategory = () => {
       <div className="main-category-con">
         {data &&
           data.map((item) => (
-            <div key={item._id} className="sub-cat-con">
-              <div
-                className="main-cat-img"
-                onClick={() => {
-                  handleCategory(item._id);
-                }}
-              >
-                <img
-                  src={item.imageKey}
-                  alt={item.name}
-                />
+            <div
+              key={item._id}
+              className="sub-cat-con"
+              onClick={() => handleCategory(item._id)}
+            >
+              <div className="main-cat-img">
+                <img src={item.imageKey} alt={item.name} />
               </div>
               <p>{item.name}</p>
             </div>
@@ -46,9 +42,6 @@ const Maincategory = () => {
       </div>
 
       <div className="coveredyou-con">
-        {/* <h1 className="covered-you-headdig">
-          Coolie No 1<span> covered you</span>
-        </h1> */}
         <div className="covered-you-main-flow">
           <div className="covered-you-sub-flow first-sub">
             <div className="coveredyou-content">

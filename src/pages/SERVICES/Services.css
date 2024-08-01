@@ -27,15 +27,14 @@
 .sub-category-display {
     display: flex;
     flex-direction: column;
-
 }
 
 .sub-category-item {
     display: grid;
     grid-template-columns: 20% 80%;
     align-items: center;
-    border-bottom: 1px dashed gray;
-    padding-left: 25px;
+    border-bottom: 1px solid rgb(185, 185, 185);
+    padding-left: 15px;
     min-height: 4rem;
     position: relative;
     color: black;
@@ -50,9 +49,10 @@
     content: '';
     position: absolute;
     left: -10px;
-    top: 0;
-    bottom: 0;
+    top: 50%;
+    transform: translateY(-50%);
     width: 5px;
+    height: 45px;
     background-color: maroon;
     border-radius: 0 5px 5px 0;
 }
@@ -105,22 +105,19 @@
 }
 
 .subcat-icon-container {
-    width: 2.5rem;
-    height: 3.2rem;
+    width: 1.5rem;
+    height: 2rem;
     background: transparent;
-    border-radius: 10px;
+    border-radius: 9px;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: background 0.3s ease, transform 0.3s ease, width 0.3s ease, height 0.3s ease;
 }
 
-.subcat-icon-container:hover {
-    background: linear-gradient(180deg, #650767 0%, #781C1C 100%);
-    width: 2.5rem;
-    /* ensure these remain constant to avoid resizing the container */
-    height: 3.2rem;
-    /* ensure these remain constant to avoid resizing the container */
+.subcat-icon-container.active {
+    background: linear-gradient(180deg, #650767 0%, #842222 100%);
+    transform: scale(1.6) translateY(-2%)
 }
 
 .subcat-icon-container img {
@@ -129,8 +126,8 @@
     transition: transform 0.3s ease;
 }
 
-.subcat-icon-container:hover img {
-    transform: scale(1.6);
+.subcat-icon-container.active img {
+    transform: scale(1.1)translateY(-20%);
 }
 
 .sub-category-service-item {

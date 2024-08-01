@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { CartContext } from "../../context/CartContext";
+import { AuthContext } from "../../context/AuthContext";
 import CartItems from "./CartItems";
 import Address from "./Address";
 import Schedule from "./Schedule";
@@ -16,9 +17,11 @@ import checkoutIconActive from "../../assets/images/checkout-active.png";
 import arrowIcon from "../../assets/images/Arrows.svg";
 import arrowIconActive from "../../assets/images/Arrows-active.svg";
 import { OrdersProvider } from "../../context/OrdersContext"; // Import OrdersProvider
+import { toast } from "react-hot-toast"; // Import toast from react-hot-toast
 
 const CartSummary = () => {
   const { cartItems } = useContext(CartContext);
+  const { isAuthenticated } = useContext(AuthContext); // Access isAuthenticated from AuthContext
   const [activeTabs, setActiveTabs] = useState(["cart"]);
   const [error, setError] = useState(null);
 
@@ -69,6 +72,11 @@ const CartSummary = () => {
   }, [error]);
 
   const handleNextStep = (nextTab) => {
+    if (!isAuthenticated) {
+      toast.error("Please log in to proceed.");
+      return;
+    }
+
     setActiveTabs((prevActiveTabs) => {
       const currentIndex = prevActiveTabs.indexOf(nextTab);
       if (currentIndex === -1) {
@@ -96,6 +104,13 @@ const CartSummary = () => {
     }
   };
 
+  const isCompleted = (step) => {
+    return (
+      activeTabs.indexOf(step) !== -1 &&
+      activeTabs.indexOf(step) < activeTabs.length - 1
+    );
+  };
+
   return (
     <OrdersProvider activeTab={activeTabs[activeTabs.length - 1]}>
       <div className="cart-summary">
@@ -103,7 +118,9 @@ const CartSummary = () => {
         <div className="cart-steps-container">
           <div className="cart-steps">
             <div
-              className={`step ${activeTabs.includes("cart") ? "active" : ""}`}
+              className={`step ${activeTabs.includes("cart") ? "active" : ""} ${
+                isCompleted("cart") ? "completed" : ""
+              }`}
               onClick={() => handleNextStep("cart")}
               style={{ backgroundColor: "transparent" }}
             >
@@ -128,7 +145,7 @@ const CartSummary = () => {
             <div
               className={`step ${
                 activeTabs.includes("address") ? "active" : ""
-              }`}
+              } ${isCompleted("address") ? "completed" : ""}`}
               onClick={() => handleNextStep("address")}
               style={{ backgroundColor: "transparent" }}
             >
@@ -155,7 +172,7 @@ const CartSummary = () => {
             <div
               className={`step ${
                 activeTabs.includes("schedule") ? "active" : ""
-              }`}
+              } ${isCompleted("schedule") ? "completed" : ""}`}
               onClick={() => handleNextStep("schedule")}
               style={{ backgroundColor: "transparent" }}
             >
@@ -182,7 +199,7 @@ const CartSummary = () => {
             <div
               className={`step ${
                 activeTabs.includes("checkout") ? "active" : ""
-              }`}
+              } ${isCompleted("checkout") ? "completed" : ""}`}
               onClick={() => handleNextStep("checkout")}
               style={{ backgroundColor: "transparent" }}
             >
