@@ -7,7 +7,6 @@ import CartSummary from "../../components/cart/CartSummary";
 import { CartContext } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import LoginComponent from "../../components/LoginComponent";
-import { TailSpin } from "react-loader-spinner";
 
 const Services = () => {
   const {
@@ -62,7 +61,13 @@ const Services = () => {
       return servicesData.map((service) => (
         <div key={service._id} className="sub-category-service-item">
           <div className="service-main-head">
-            <div className="service-icon-container">
+            <div
+              className={`service-icon-container ${
+                selectedSubCategoryId === service.subCategoryId._id
+                  ? "active"
+                  : ""
+              }`}
+            >
               <img
                 src={service.subCategoryId.imageKey}
                 alt={service.subCategoryId.name}
@@ -134,7 +139,11 @@ const Services = () => {
                   }`}
                   onClick={() => setSelectedSubCategoryId(subCat._id)}
                 >
-                  <div className="subcat-icon-container">
+                  <div
+                    className={`subcat-icon-container ${
+                      selectedSubCategoryId === subCat._id ? "active" : ""
+                    }`}
+                  >
                     <img
                       src={subCat.imageKey}
                       alt={subCat.name}
