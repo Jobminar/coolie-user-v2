@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./LoginComponent.css";
@@ -31,6 +31,16 @@ const LoginComponent = ({ onLoginSuccess }) => {
     setGoogleLoginSuccess(true);
   };
 
+  useEffect(() => {
+    if (phone.length === 10) {
+      const button = document.querySelector(".send-otp-button");
+      button.classList.add("glow");
+    } else {
+      const button = document.querySelector(".send-otp-button");
+      button.classList.remove("glow");
+    }
+  }, [phone]);
+
   return (
     <div className="login-box">
       <div className="login-box-header">
@@ -50,7 +60,9 @@ const LoginComponent = ({ onLoginSuccess }) => {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
-        <button onClick={handleSendOtp}>Send OTP</button>
+        <button className="send-otp-button" onClick={handleSendOtp}>
+          Send OTP
+        </button>
       </div>
       {otpSent && (
         <div className="input-group">
