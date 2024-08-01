@@ -66,14 +66,14 @@ const LoginComponent = ({ onLoginSuccess }) => {
         Login
       </button>
 
-      <p>
+      {/* <p>
         Don't have an account? <a href="/signup">signup</a>
       </p>
       <div className="oval-shaped-div">
         <button className="google-login-button" onClick={handleGoogleLogin}>
           <img src={googleLogo} alt="Google" className="google-logo" />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
