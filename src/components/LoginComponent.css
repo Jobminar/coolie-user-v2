@@ -93,7 +93,7 @@ input:focus {
 }
 
 .send-otp-button.glow {
-    animation: glow 1s infinite alternate;
+    animation: glow 1s 2;
     border-radius: 10%;
 }
 
@@ -105,7 +105,7 @@ input:focus {
 
     100% {
         background-color: #ffffff;
-        color: #1aff00;
+        color: #0d8700;
     }
 }
 

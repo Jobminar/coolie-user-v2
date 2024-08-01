@@ -32,11 +32,10 @@ const LoginComponent = ({ onLoginSuccess }) => {
   };
 
   useEffect(() => {
+    const button = document.querySelector(".send-otp-button");
     if (phone.length === 10) {
-      const button = document.querySelector(".send-otp-button");
       button.classList.add("glow");
     } else {
-      const button = document.querySelector(".send-otp-button");
       button.classList.remove("glow");
     }
   }, [phone]);
@@ -71,6 +70,7 @@ const LoginComponent = ({ onLoginSuccess }) => {
             placeholder="OTP"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
+            className="otp-input"
           />
         </div>
       )}
