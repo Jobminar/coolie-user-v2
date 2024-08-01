@@ -60,47 +60,38 @@ const Services = () => {
       );
     } else if (servicesData) {
       return servicesData.map((service) => (
-        <div key={service._id} className="sub-category-service-item">
+        <>
+            <div key={service._id} className="sub-category-service-item">
           <div className="service-main-head">
             <div className="service-icon-container">
               <img
-                src={service.subCategoryId.imageKey}
+                src={service.image}
                 alt={service.subCategoryId.name}
                 className="tab-image"
               />
             </div>
             <div className="service-content">
               <h5>{service.name}</h5>
+              <div>
               {service.serviceVariants.map((variant) => (
                 <div key={variant._id} className="service-variant">
                   <p>
                     ({variant.min} to {variant.max} {variant.metric})
                   </p>
+                  <p>&#8377; {variant.price}</p>
                 </div>
               ))}
+              </div>
+              
             </div>
+            <div className="dropdown-con">
             <div
               className="dropdown"
               onClick={() => toggleDescription(service._id)}
             >
               <img src={dropdown} alt="dropdown" />
-            </div>
-          </div>
-          <div
-            className="description"
-            style={{
-              display: descriptionVisibility[service._id] ? "block" : "none",
-            }}
-          >
-            {service.description}
-          </div>
-          <div className="price">
-            {service.serviceVariants.map((variant) => (
-              <div key={variant._id}>
-                <p>&#8377; {variant.price}</p>
               </div>
-            ))}
-            <button
+              <button
               onClick={() =>
                 handleAddToCart(
                   service._id,
@@ -111,17 +102,43 @@ const Services = () => {
             >
               ADD
             </button>
+          
+            </div>
+           
           </div>
+          <div
+            className="description"
+            style={{
+              display: descriptionVisibility[service._id] ? "block" : "none",
+            }}
+          >
+            {service.description}
+          </div>
+          
         </div>
+        </>
+        
       ));
     } else {
       return <div className="loading">No Services Available for this</div>;
     }
   };
 
+  const filteredCategoryData = categoryData.filter(item => item._id === selectedCategoryId);
   return (
     <div className="services">
       <ScrollableTabs />
+      <div>
+      {filteredCategoryData.map((uiItem) => (
+        <div key={uiItem._id} className="variant">
+          {uiItem.uiVariant.map((variant, index) => (
+            <div key={index} className="ui-variant-item">
+              {variant}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
       <div className="services-cart-display">
         <div className="subcat-services-dispaly">
           <div className="sub-category-display">
