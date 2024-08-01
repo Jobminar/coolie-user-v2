@@ -111,8 +111,8 @@
     /* 60px */
     height: 3.75rem;
     /* 60px */
-    object-fit: cover;
-    border-radius: 50%;
+
+    border-radius: 5%;
 }
 
 .scrollable-tab p {
