@@ -93,7 +93,7 @@ input:focus {
 }
 
 .send-otp-button.glow {
-    animation: glow 1s 2;
+    animation: glow 1s 4;
     border-radius: 10%;
 }
 
