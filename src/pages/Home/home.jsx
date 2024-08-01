@@ -5,6 +5,7 @@ import Howitworks from "../Home/howitworks";
 import Ourcoreservices from "./OUR-CORE-SERVICES/our-core-services";
 import ApplianceRepair from "./Appliance-Services/ApplianceRepair";
 import "./home.css";
+import OurPopularServices from "./OurPopularServices/OurPopularServices";
 
 const Home = () => {
   return (
@@ -13,6 +14,7 @@ const Home = () => {
       <Mostbookedservices />
       <Howitworks />
       <ApplianceRepair />
+      <OurPopularServices />
       <Ourcoreservices />
     </div>
   );

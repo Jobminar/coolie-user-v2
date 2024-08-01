@@ -164,11 +164,11 @@ const Maincategory = () => {
           <div className="covered-you-sub-flow third-sub">
             <div className="coveredyou-content">
               <h1>
-                Relax & rejuvenate
+                Get Experts
                 <br />
-                at home
+                in 2 hours
               </h1>
-              <p>Massage for men</p>
+              <p>Electricians,Plumbers and more</p>
               <button className="covered-book-button">Book now</button>
             </div>
             <div className="subflow-image">
