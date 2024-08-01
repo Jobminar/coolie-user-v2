@@ -94,17 +94,18 @@ input:focus {
 
 .send-otp-button.glow {
     animation: glow 1s infinite alternate;
+    border-radius: 50%;
 }
 
 @keyframes glow {
     0% {
-        background-color: #ff0000;
+        background-color: #15ff00;
         color: white;
     }
 
     100% {
         background-color: #ffffff;
-        color: #ff0000;
+        color: #1aff00;
     }
 }
 
