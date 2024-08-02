@@ -34,7 +34,7 @@
     display: grid;
     grid-template-columns: 20% 80%;
     align-items: center;
-    border-bottom: 1px dashed gray;
+    border-bottom: 1px dashed rgb(193, 193, 193);
     padding-left: 25px;
     min-height: 4rem;
     position: relative;
