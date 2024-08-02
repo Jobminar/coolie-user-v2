@@ -20,7 +20,7 @@ import { OrdersProvider } from "../../context/OrdersContext";
 import { toast } from "react-hot-toast";
 
 const CartSummary = ({ fullWidth }) => {
-  const { cartItems } = useContext(CartContext);
+  const { cartItems, totalItems } = useContext(CartContext); // Access totalItems from CartContext
   const { isAuthenticated } = useContext(AuthContext);
   const [activeTabs, setActiveTabs] = useState(["cart"]);
   const [error, setError] = useState(null);
@@ -128,9 +128,7 @@ const CartSummary = ({ fullWidth }) => {
                   src={activeTabs.includes("cart") ? cartIconActive : cartIcon}
                   alt="Cart"
                 />
-                {cartItems.length > 0 && (
-                  <span className="badge">{cartItems.length}</span>
-                )}
+                {totalItems > 0 && <span className="badge">{totalItems}</span>}
               </div>
               <span>Cart</span>
             </div>
