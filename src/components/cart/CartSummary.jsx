@@ -13,7 +13,7 @@ import locationMarkerActive from "../../assets/images/location-marker-active.svg
 import calendarIcon from "../../assets/images/calender.svg";
 import calendarIconActive from "../../assets/images/calender-active.svg";
 import checkoutIcon from "../../assets/images/checkout.svg";
-import checkoutIconActive from "../../assets/images/checkout-active.png";
+import checkoutIconActive from "../../assets/images/checkout-active.svg";
 import arrowIcon from "../../assets/images/Arrows.svg";
 import arrowIconActive from "../../assets/images/Arrows-active.svg";
 import { OrdersProvider } from "../../context/OrdersContext";
