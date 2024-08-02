@@ -16,16 +16,16 @@ import checkoutIcon from "../../assets/images/checkout.svg";
 import checkoutIconActive from "../../assets/images/checkout-active.png";
 import arrowIcon from "../../assets/images/Arrows.svg";
 import arrowIconActive from "../../assets/images/Arrows-active.svg";
-import { OrdersProvider } from "../../context/OrdersContext"; // Import OrdersProvider
-import { toast } from "react-hot-toast"; // Import toast from react-hot-toast
+import { OrdersProvider } from "../../context/OrdersContext";
+import { toast } from "react-hot-toast";
 
-const CartSummary = () => {
+const CartSummary = ({ fullWidth }) => {
   const { cartItems } = useContext(CartContext);
-  const { isAuthenticated } = useContext(AuthContext); // Access isAuthenticated from AuthContext
+  const { isAuthenticated } = useContext(AuthContext);
   const [activeTabs, setActiveTabs] = useState(["cart"]);
   const [error, setError] = useState(null);
 
-  const initialRender = useRef(true); // To track the initial render
+  const initialRender = useRef(true);
   const activeTabsRef = useRef(activeTabs);
   const errorRef = useRef(error);
 
@@ -48,7 +48,6 @@ const CartSummary = () => {
   }, []);
 
   useEffect(() => {
-    // Skip the initial render to avoid overwriting the saved state
     if (initialRender.current) {
       initialRender.current = false;
       return;
@@ -113,7 +112,7 @@ const CartSummary = () => {
 
   return (
     <OrdersProvider activeTab={activeTabs[activeTabs.length - 1]}>
-      <div className="cart-summary">
+      <div className={`cart-summary ${fullWidth ? "full-width" : ""}`}>
         {error && <div className="error-message">{error}</div>}
         <div className="cart-steps-container">
           <div className="cart-steps">
@@ -124,14 +123,16 @@ const CartSummary = () => {
               onClick={() => handleNextStep("cart")}
               style={{ backgroundColor: "transparent" }}
             >
-              <img
-                src={activeTabs.includes("cart") ? cartIconActive : cartIcon}
-                alt="Cart"
-              />
+              <div className="icon-container">
+                <img
+                  src={activeTabs.includes("cart") ? cartIconActive : cartIcon}
+                  alt="Cart"
+                />
+                {cartItems.length > 0 && (
+                  <span className="badge">{cartItems.length}</span>
+                )}
+              </div>
               <span>Cart</span>
-              {cartItems.length > 0 && (
-                <span className="badge">{cartItems.length}</span>
-              )}
             </div>
             <img
               src={
@@ -149,14 +150,16 @@ const CartSummary = () => {
               onClick={() => handleNextStep("address")}
               style={{ backgroundColor: "transparent" }}
             >
-              <img
-                src={
-                  activeTabs.includes("address")
-                    ? locationMarkerActive
-                    : locationMarker
-                }
-                alt="Address"
-              />
+              <div className="icon-container">
+                <img
+                  src={
+                    activeTabs.includes("address")
+                      ? locationMarkerActive
+                      : locationMarker
+                  }
+                  alt="Address"
+                />
+              </div>
               <span>Address</span>
             </div>
             <img
@@ -176,14 +179,16 @@ const CartSummary = () => {
               onClick={() => handleNextStep("schedule")}
               style={{ backgroundColor: "transparent" }}
             >
-              <img
-                src={
-                  activeTabs.includes("schedule")
-                    ? calendarIconActive
-                    : calendarIcon
-                }
-                alt="Schedule"
-              />
+              <div className="icon-container">
+                <img
+                  src={
+                    activeTabs.includes("schedule")
+                      ? calendarIconActive
+                      : calendarIcon
+                  }
+                  alt="Schedule"
+                />
+              </div>
               <span>Schedule</span>
             </div>
             <img
@@ -203,14 +208,16 @@ const CartSummary = () => {
               onClick={() => handleNextStep("checkout")}
               style={{ backgroundColor: "transparent" }}
             >
-              <img
-                src={
-                  activeTabs.includes("checkout")
-                    ? checkoutIconActive
-                    : checkoutIcon
-                }
-                alt="Checkout"
-              />
+              <div className="icon-container">
+                <img
+                  src={
+                    activeTabs.includes("checkout")
+                      ? checkoutIconActive
+                      : checkoutIcon
+                  }
+                  alt="Checkout"
+                />
+              </div>
               <span>Checkout</span>
             </div>
           </div>

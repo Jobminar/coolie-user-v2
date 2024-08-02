@@ -83,3 +83,8 @@
     font-size: 18px;
     font-weight: bold;
 }
+
+/* CartSummary.css */
+.full-width {
+    width: 100%;
+}

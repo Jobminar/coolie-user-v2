@@ -55,7 +55,7 @@
     transform: translateY(-50%);
     width: 5px;
     height: 45px;
-    background-color: maroon;
+    background-color: #FFA500;
     border-radius: 0 5px 5px 0;
 }
 
@@ -80,7 +80,8 @@
 
 .services-display {
     background-color: #E3E4EA;
-    border-radius: 0px 10px 10px 10px;
+    /* border-radius: 0px 10px 10px 10px; */
+    border-radius: 0px;
     display: flex;
     flex-direction: column;
     justify-content: top;
@@ -118,7 +119,7 @@
 }
 
 .subcat-icon-container.active {
-    background: linear-gradient(180deg, #650767 0%, #842222 100%);
+    background: linear-gradient(180deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
     transform: scale(1.4) translateY(-2%)
 }
 
@@ -148,7 +149,8 @@
 
 .service-icon-container {
     width: auto;
-    height: 4rem;
+    /* change made by sameer 2-8-2024 */
+    height: 2.5rem;
 }
 
 .service-main-head {
