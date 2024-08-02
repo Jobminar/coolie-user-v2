@@ -217,7 +217,7 @@ export const CartProvider = ({ children, cartId, showLogin }) => {
         removeFromCart,
         updateQuantity,
         totalPrice,
-        totalItems,
+        totalItems, // Passing totalItems in the context
         setCartItems,
         calculateTotalPrice,
         calculateTotalItems,

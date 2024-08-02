@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./LoginComponent.css";
@@ -31,6 +31,15 @@ const LoginComponent = ({ onLoginSuccess }) => {
     setGoogleLoginSuccess(true);
   };
 
+  useEffect(() => {
+    const button = document.querySelector(".send-otp-button");
+    if (phone.length === 10) {
+      button.classList.add("glow");
+    } else {
+      button.classList.remove("glow");
+    }
+  }, [phone]);
+
   return (
     <div className="login-box">
       <div className="login-box-header">
@@ -50,7 +59,9 @@ const LoginComponent = ({ onLoginSuccess }) => {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
-        <button onClick={handleSendOtp}>Send OTP</button>
+        <button className="send-otp-button" onClick={handleSendOtp}>
+          Send OTP
+        </button>
       </div>
       {otpSent && (
         <div className="input-group">
@@ -59,6 +70,7 @@ const LoginComponent = ({ onLoginSuccess }) => {
             placeholder="OTP"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
+            className="otp-input"
           />
         </div>
       )}
@@ -66,14 +78,14 @@ const LoginComponent = ({ onLoginSuccess }) => {
         Login
       </button>
 
-      <p>
+      {/* <p>
         Don't have an account? <a href="/signup">signup</a>
       </p>
       <div className="oval-shaped-div">
         <button className="google-login-button" onClick={handleGoogleLogin}>
           <img src={googleLogo} alt="Google" className="google-logo" />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

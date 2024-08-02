@@ -272,15 +272,14 @@
     background: rgba(255, 255, 255, 0.8);
     z-index: 1000;
 }
-.variant {
-    display: flex;
-    gap: 0rem;
-    /* border: 1px solid black; */
-    margin: 1rem;
-  }
-  .ui-variant-item {
+.variant{
+  display: flex;
+  gap: 0rem;
+  /* border: 1px solid black; */
+}
+.ui-variant-item{
     width: 10rem;
-    /* border: 1px solid black; */
+    border: 1px solid black;
     padding: 1rem;
     border-radius: 50px;
     font-family: Inter;
@@ -288,15 +287,7 @@
     font-weight: 700;
     line-height: 29.05px;
     text-align: center;
-    background-color: white;
-    color: red;
-    box-shadow: 0 4px 2px -2px gray; /* Bottom-only shadow */
-  }
-  
-  .ui-variant-item.active {
     background-color: #FFF7E3;
-    color: #FFB800;
-    box-shadow: 0 4px 2px -2px gray; /* Bottom-only shadow for active state */
-  }
-  
-  
+    color: red;
+
+}

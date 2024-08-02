@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { CartProvider } from "../../context/CartContext"; // Import CartProvider
+import { CartContext, CartProvider } from "../../context/CartContext"; // Import CartContext
 import "./header.css";
 import playstore from "../../assets/images/play-store.svg";
 import apple from "../../assets/images/apple.svg";
@@ -18,6 +18,7 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 const Header = ({ children }) => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { totalItems } = useContext(CartContext); // Access totalItems from CartContext
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
 
@@ -57,7 +58,13 @@ const Header = ({ children }) => {
           <div className="f-h-last-icons">
             <img src={help} alt="icon" onClick={toggleChatbot} />
             <img src={translate} alt="icon" />
-            <FontAwesomeIcon icon={faCartShopping} onClick={handleCartClick} />
+            <div className="cart-icon-container" onClick={handleCartClick}>
+              <FontAwesomeIcon
+                icon={faCartShopping}
+                style={{ fontSize: "1.4rem" }}
+              />
+              {totalItems > 0 && <span className="badge">{totalItems}</span>}
+            </div>
             <img src={profile} alt="icon" onClick={handleProfileClick} />
           </div>
         </div>
