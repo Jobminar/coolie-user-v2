@@ -1,5 +1,5 @@
 import React from "react";
-import "./maincategory.css";
+import "./Howitworks.css";
 import howitworks1 from "../../assets/images/how-it-works-1.png";
 import howitworks2 from "../../assets/images/how-it-works-2.png";
 import howitworks3 from "../../assets/images/how-it-works-3.png";

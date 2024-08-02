@@ -47,7 +47,7 @@
 
 .sub-cat-con p {
     font-family: Roboto;
-    font-size: 16px;
+    font-size: 6px;
     font-weight: 700;
     line-height: 18.75px;
     color: #292c31;
@@ -66,170 +66,176 @@
 /* Covered You Styles */
 .coveredyou-con {
     max-height: inherit;
-    padding: 1rem;
+    padding: 0.1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
     position: relative;
     cursor: grab;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(165, 165, 165, 0.2) transparent;
     scroll-behavior: smooth;
 }
 
-.coveredyou-con:hover {
-    overflow-y: auto;
+.slick-list {
+    overflow: hidden;
 }
 
-.coveredyou-con::-webkit-scrollbar {
-    height: 8px;
-    background-color: transparent;
-}
-
-.coveredyou-con::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 4px;
-}
-
-.coveredyou-con:hover::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-.covered-you-main-flow {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 0px;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    column-gap: 2rem;
-    -webkit-overflow-scrolling: touch;
+.slick-slide {
+    padding: 0 20px;
+    /* Increase the spacing between slides */
+    box-sizing: border-box;
 }
 
 .covered-you-sub-flow {
-    padding-left: 1rem;
-    height: 12rem;
-    min-width: 25rem;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    height: 10rem;
+    /* Decrease the height of the cards */
+    min-width: 20rem;
+    /* Increase the width of the cards */
     border-radius: 10px;
-    display: grid;
-    grid-template-columns: 60% 40%;
-    justify-content: space-between;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin: 0 2px;
+    /* Increase the margin to add spacing between slides */
+}
+
+.coveredyou-content {
+    width: 65%;
+    /* Adjust width to fit the new card dimensions */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.coveredyou-content h1 {
+    font-family: Roboto;
+    font-size: 1.2rem;
+    /* Adjust font size */
+    font-weight: 400;
+    line-height: 1.5rem;
+    /* Adjust line height */
+    letter-spacing: 1px;
+    text-align: left;
+    color: #333;
+    margin: 0.5rem 0;
+    /* Adjust margin between text contents */
+}
+
+.coveredyou-content p {
+    font-family: Roboto;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.2rem;
+    text-align: left;
+    color: #666;
+    margin: 0.5rem 0;
+    /* Adjust margin between text contents */
+}
+
+.covered-book-button {
+    width: 8rem;
+    height: 2.5rem;
+    margin-top: 0.5rem;
+    /* Adjust margin */
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    text-transform: uppercase;
+}
+
+.covered-book-button:hover {
+    cursor: pointer;
+    background-color: #0056b3;
+}
+
+.subflow-image {
+    width: 10rem;
+    /* Adjust width to fit the new card dimensions */
+    height: 10rem;
+    /* Adjust height to fit the new card dimensions */
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
 }
 
 .subflow-image img {
     width: 100%;
     height: 100%;
-}
-
-.coveredyou-content h1 {
-    font-family: Roboto;
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 28.13px;
-    letter-spacing: 1px;
-    text-align: left;
-    color: white;
-}
-
-.coveredyou-content p {
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 22px;
-    text-align: left;
-    color: white;
-
-}
-
-.covered-book-button {
-    width: 8rem;
-    height: 2rem;
-    margin: 1rem 0rem;
-    background-color: rgba(0, 0, 0, 0.3);
-    border: none;
-    border-radius: 10px;
-    color: white;
-}
-
-.covered-book-button:hover {
-    cursor: pointer;
+    object-fit: cover;
+    border-radius: 5px;
 }
 
 .first-sub {
-    background-image: url(../../assets/images/covered-you-1-bgimg.png);
+    background-image: url('../../assets/images/covered-you-1-bgimg.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.first-sub::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url(../../assets/images/covered-you-1-bgimg.png);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.77;
-    z-index: -1;
-    border-radius: 10px;
 }
 
 .second-sub {
-    background-image: url(../../assets/images/covered-you-2-bgimg.png);
+    background-image: url('../../assets/images/covered-you-2-bgimg.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.second-sub::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url(../../assets/images/covered-you-2-bgimg.png);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.77;
-    z-index: -1;
-    border-radius: 10px;
 }
 
 .third-sub {
-    background-image: url(../../assets/images/covered-you-2-bgimg.png);
+    background-image: url('../../assets/images/covered-you-1-bgimg.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
 }
 
-.third-sub::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url(../../assets/images/covered-you-2-bgimg.png);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.77;
-    z-index: -1;
-    border-radius: 10px;
+/* Slick Slider Arrows */
+/* Slick Slider Arrows */
+.custom-arrow {
+    width: 2rem;
+    height: 2rem;
+    background: rgb(255, 255, 255);
+    /* Change arrow color to black for visibility */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    z-index: 2;
+    /* Ensure arrows are above other content */
+}
+
+.slick-prev {
+    left: 10px;
+    z-index: 2;
+}
+
+.slick-next {
+    right: 10px;
+    z-index: 2;
+}
+
+.slick-dots {
+    bottom: -40px;
+    /* Adjust the position of dots */
+}
+
+.slick-dots li {
+    margin: 0 5px;
+    /* Space between dots */
+}
+
+.slick-dots li button:before {
+    font-size: 12px;
+    /* Size of the dots */
+    color: black;
+    /* Default color of the dots */
+}
+
+.slick-dots li.slick-active button:before {
+    color: red;
+    /* Color of the active dot */
 }
 
 /* How It Works Styles */
@@ -243,17 +249,17 @@
 
 .above-headddig {
     font-family: Roboto Condensed;
-    font-size: 32px;
+    font-size: 3.2rem;
     font-weight: 700;
-    line-height: 37.5px;
+    line-height: 3.75rem;
     text-align: left;
 }
 
 .above-headddig span {
     font-family: Roboto Condensed;
-    font-size: 32px;
+    font-size: 3.2rem;
     font-weight: 300;
-    line-height: 37.5px;
+    line-height: 3.75rem;
     text-align: left;
     color: #000000;
     opacity: 55%;
@@ -264,7 +270,6 @@
     justify-content: space-between;
     align-items: center;
     column-gap: 2rem;
-    /* Adjust gap between items */
 }
 
 .how-sub-flow {
@@ -283,11 +288,11 @@
 
 .how-flow p {
     font-family: Roboto;
-    font-size: 16px;
+    font-size: 1.6rem;
     font-weight: 400;
-    line-height: 22px;
+    line-height: 2.2rem;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 2rem;
 }
 
 .how-image {
@@ -314,9 +319,7 @@
     position: absolute;
     top: 40%;
     left: 100%;
-    /* Position the arrow to the right of the current item */
     transform: translate(-1%, -50%);
-    /* Center the arrow vertically */
 }
 
 .arrow-container img {
@@ -344,4 +347,8 @@
     width: 100%;
     height: 100%;
     border-radius: 50%;
+}
+
+.slick-arrow {
+    color: #000000
 }
