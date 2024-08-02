@@ -71,6 +71,7 @@ const Services = () => {
               <img
                 src={service.subCategoryId.imageKey}
                 alt={service.subCategoryId.name}
+                className="tab-image"
               />
             </div>
             <div className="service-content">
@@ -143,7 +144,11 @@ const Services = () => {
                       selectedSubCategoryId === subCat._id ? "active" : ""
                     }`}
                   >
-                    <img src={subCat.imageKey} alt={subCat.name} />
+                    <img
+                      src={subCat.imageKey}
+                      alt={subCat.name}
+                      className="tab-image"
+                    />
                   </div>
                   <p
                     className={
