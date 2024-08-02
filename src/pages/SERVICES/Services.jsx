@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import "./Services.css";
 import ScrollableTabs from "./ScrollableTabs";
 import { CategoryContext } from "../../context/CategoryContext";
@@ -24,6 +24,7 @@ const Services = () => {
 
   const [descriptionVisibility, setDescriptionVisibility] = useState({});
   const [isLoginVisible, setLoginVisible] = useState(false);
+  const [variantName, setVariantName] = useState("");
 
   if (error) {
     return <div className="error">Error: {error}</div>;
@@ -48,8 +49,13 @@ const Services = () => {
     setLoginVisible(false);
   };
 
-  const displayServices = () => {
-    if (servicesData && servicesData.length === 0) {
+  const handleVariant = (variantname) => {
+    setVariantName(variantname);
+    console.log(variantname, 'variant name');
+  };
+
+  const displayServices = (filteredServiceData) => {
+    if (filteredServiceData && filteredServiceData.length === 0) {
       return (
         <div className="sub-category-service-item">
           <div className="service-content">
@@ -57,10 +63,9 @@ const Services = () => {
           </div>
         </div>
       );
-    } else if (servicesData) {
-      return servicesData.map((service) => (
-        <>
-            <div key={service._id} className="sub-category-service-item">
+    } else if (filteredServiceData) {
+      return filteredServiceData.map((service) => (
+        <div key={service._id} className="sub-category-service-item">
           <div className="service-main-head">
             <div
               className={`service-icon-container ${
@@ -78,38 +83,35 @@ const Services = () => {
             <div className="service-content">
               <h5>{service.name}</h5>
               <div>
-              {service.serviceVariants.map((variant) => (
-                <div key={variant._id} className="service-variant">
-                  <p>
-                    ({variant.min} to {variant.max} {variant.metric})
-                  </p>
-                  <p>&#8377; {variant.price}</p>
-                </div>
-              ))}
+                {service.serviceVariants.map((variant) => (
+                  <div key={variant._id} className="service-variant">
+                    <p>
+                      ({variant.min} to {variant.max} {variant.metric})
+                    </p>
+                    <p>&#8377; {variant.price}</p>
+                  </div>
+                ))}
               </div>
-              
             </div>
             <div className="dropdown-con">
-            <div
-              className="dropdown"
-              onClick={() => toggleDescription(service._id)}
-            >
-              <img src={dropdown} alt="dropdown" />
+              <div
+                className="dropdown"
+                onClick={() => toggleDescription(service._id)}
+              >
+                <img src={dropdown} alt="dropdown" />
               </div>
               <button
-              onClick={() =>
-                handleAddToCart(
-                  service._id,
-                  service.categoryId._id,
-                  service.subCategoryId._id,
-                )
-              }
-            >
-              ADD
-            </button>
-          
+                onClick={() =>
+                  handleAddToCart(
+                    service._id,
+                    service.categoryId._id,
+                    service.subCategoryId._id
+                  )
+                }
+              >
+                ADD
+              </button>
             </div>
-           
           </div>
           <div
             className="description"
@@ -119,31 +121,42 @@ const Services = () => {
           >
             {service.description}
           </div>
-          
         </div>
-        </>
-        
       ));
     } else {
       return <div className="loading">No Services Available for this</div>;
     }
   };
 
-  const filteredCategoryData = categoryData.filter(item => item._id === selectedCategoryId);
+  const filteredCategoryData = categoryData.filter(
+    (item) => item._id === selectedCategoryId
+  );
+
+  const filteredServiceData = servicesData
+    ? servicesData.filter(
+        (service) => service.uiVariant && service.uiVariant.includes(variantName)
+      )
+    : [];
+
   return (
     <div className="services">
       <ScrollableTabs />
       <div>
-      {filteredCategoryData.map((uiItem) => (
-        <div key={uiItem._id} className="variant">
-          {uiItem.uiVariant.map((variant, index) => (
-            <div key={index} className="ui-variant-item">
-              {variant}
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
+           {filteredCategoryData.map((uiItem) => (
+          <div key={uiItem._id} className="variant">
+            {uiItem.uiVariant.map((variant, index) => (
+              <div
+                key={index}
+                className={`ui-variant-item ${variant === variantName ? "active" : ""}`}
+                onClick={() => handleVariant(variant)}
+              >
+                {variant}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
       <div className="services-cart-display">
         <div className="subcat-services-dispaly">
           <div className="sub-category-display">
@@ -180,7 +193,7 @@ const Services = () => {
               <p>No additional subcategories available.</p>
             )}
           </div>
-          <div className="services-display">{displayServices()}</div>
+          <div className="services-display">{displayServices(filteredServiceData)}</div>
         </div>
         <CartSummary />
       </div>
