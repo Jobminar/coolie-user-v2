@@ -40,7 +40,7 @@ const ApplianceRepair = () => {
     },
     {
       id: 5,
-      name: "New AC Installation",
+      name: "AC Maintainance",
       price: "Starting at ₹1000",
       image: newACInstallation,
     },
