@@ -139,7 +139,7 @@ const Maincategory = () => {
                 <br />
                 in 2 hours
               </h1>
-              <p>Electricians,Plumbers & more</p>
+              <p>Electricians, Plumbers & more</p>
               <button className="covered-book-button">Book now</button>
             </div>
             <div className="subflow-image">
@@ -149,11 +149,11 @@ const Maincategory = () => {
           <div className="covered-you-sub-flow fourth-sub">
             <div className="coveredyou-content">
               <h1>
-                Keep pests
+                Bridal makeup
                 <br />
-                away
+                at your convenience
               </h1>
-              <p>Pest control services</p>
+              <p>Bridal makeup services</p>
               <button className="covered-book-button">Book now</button>
             </div>
             <div className="subflow-image">
