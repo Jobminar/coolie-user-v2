@@ -25,35 +25,24 @@ const Services = () => {
   const [descriptionVisibility, setDescriptionVisibility] = useState({});
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [variantName, setVariantName] = useState("");
-  const [filteredServiceData, setFilteredServiceData] = useState([]);
 
   useEffect(() => {
-    // Set the first variant as active by default and log it to the console
-    if (categoryData.length > 0 && selectedCategoryId) {
-      const selectedCategory = categoryData.find(
-        (category) => category._id === selectedCategoryId
+    if (categoryData.length > 0) {
+      const initialCategory = categoryData.find(
+        (item) => item._id === selectedCategoryId,
       );
-      if (selectedCategory && selectedCategory.uiVariant.length > 0) {
-        const firstVariant = selectedCategory.uiVariant[0];
-        setVariantName(firstVariant);
-        console.log("Active variant tab:", firstVariant);
+      if (initialCategory) {
+        const validVariants = initialCategory.uiVariant.filter(
+          (variant) => variant.toLowerCase() !== "none",
+        );
+        if (validVariants.length > 0) {
+          setVariantName(validVariants[0]);
+        } else {
+          setVariantName(""); // Reset variant name if no valid uiVariant exists
+        }
       }
     }
   }, [categoryData, selectedCategoryId]);
-
-  useEffect(() => {
-    if (!variantName || variantName === "none") {
-      setFilteredServiceData([]);
-    } else {
-      const filteredData = servicesData
-        ? servicesData.filter(
-            (service) =>
-              service.uiVariant && service.uiVariant.includes(variantName)
-          )
-        : [];
-      setFilteredServiceData(filteredData);
-    }
-  }, [variantName, servicesData]);
 
   if (error) {
     return <div className="error">Error: {error}</div>;
@@ -80,7 +69,6 @@ const Services = () => {
 
   const handleVariant = (variantname) => {
     setVariantName(variantname);
-    console.log("Active variant tab:", variantname);
   };
 
   const displayServices = (filteredServiceData) => {
@@ -134,7 +122,7 @@ const Services = () => {
                   handleAddToCart(
                     service._id,
                     service.categoryId._id,
-                    service.subCategoryId._id
+                    service.subCategoryId._id,
                   )
                 }
               >
@@ -158,26 +146,48 @@ const Services = () => {
   };
 
   const filteredCategoryData = categoryData.filter(
-    (item) => item._id === selectedCategoryId
+    (item) => item._id === selectedCategoryId,
   );
+
+  const filteredServiceData = servicesData
+    ? servicesData.filter((service) => {
+        if (variantName) {
+          return (
+            service.subCategoryId._id === selectedSubCategoryId &&
+            service.serviceVariants.some(
+              (variant) => variant.variantName === variantName,
+            )
+          );
+        }
+        return service.subCategoryId._id === selectedSubCategoryId;
+      })
+    : [];
 
   return (
     <div className="services">
       <ScrollableTabs />
       <div>
-        {filteredCategoryData.map((uiItem) => (
-          <div key={uiItem._id} className="variant">
-            {uiItem.uiVariant.map((variant, index) => (
-              <div
-                key={index}
-                className={`ui-variant-item ${variant === variantName ? "active" : ""}`}
-                onClick={() => handleVariant(variant)}
-              >
-                {variant}
-              </div>
-            ))}
-          </div>
-        ))}
+        {filteredCategoryData.map((uiItem) => {
+          const validVariants = uiItem.uiVariant.filter(
+            (variant) => variant.toLowerCase() !== "none",
+          );
+          return (
+            <div key={uiItem._id} className="variant">
+              {validVariants.length > 0 &&
+                validVariants.map((variant, index) => (
+                  <div
+                    key={index}
+                    className={`ui-variant-item ${
+                      variant === variantName ? "active" : ""
+                    }`}
+                    onClick={() => handleVariant(variant)}
+                  >
+                    {variant}
+                  </div>
+                ))}
+            </div>
+          );
+        })}
       </div>
 
       <div className="services-cart-display">
@@ -217,11 +227,7 @@ const Services = () => {
             )}
           </div>
           <div className="services-display">
-            {variantName && variantName !== "none" ? (
-              displayServices(filteredServiceData)
-            ) : (
-              <p>Select a variant to see services.</p>
-            )}
+            {displayServices(filteredServiceData)}
           </div>
         </div>
         <CartSummary />
