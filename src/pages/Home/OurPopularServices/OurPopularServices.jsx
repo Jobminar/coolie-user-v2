@@ -5,6 +5,10 @@ import salonForWomen from "../../../assets/images/facial-makeup.png";
 import sofaCleaning from "../../../assets/images/sofa-cleaning.png";
 import pestControl from "../../../assets/images/pest-control.png";
 import waxServices from "../../../assets/images/waxing.png";
+import headMassage from "../../../assets/images/head-massage.png";
+import hairSetForWomen from "../../../assets/images/hairset-women.png";
+import hairWash from "../../../assets/images/hair-wash.png";
+import nailPolish from "../../../assets/images/nail-polish.png";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -33,6 +37,30 @@ const OurPopularServices = () => {
       name: "Waxing",
       price: "Starting at ₹150",
       image: waxServices,
+    },
+    {
+      id: 5,
+      name: "Head Massage",
+      price: "Starting at ₹250",
+      image: headMassage,
+    },
+    {
+      id: 6,
+      name: "Hair Set for Women",
+      price: "Starting at ₹400",
+      image: hairSetForWomen,
+    },
+    {
+      id: 7,
+      name: "Hair Wash",
+      price: "Starting at ₹100",
+      image: hairWash,
+    },
+    {
+      id: 8,
+      name: "Nail Polish",
+      price: "Starting at ₹50",
+      image: nailPolish,
     },
   ];
 
