@@ -67,7 +67,7 @@
 .coveredyou-con {
     max-height: inherit;
     padding: 0.1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
     position: relative;
     cursor: grab;
     scroll-behavior: smooth;
@@ -79,7 +79,9 @@
 }
 
 .slick-slide {
-    padding: 0 20px;
+    padding: 0 19px;
+    /* commented because of jerky movements */
+    /* margin: 0 -2px; */
     /* Increase the spacing between slides */
     box-sizing: border-box;
 }
@@ -110,9 +112,9 @@
 
 .coveredyou-content h1 {
     font-family: Roboto;
-    font-size: 1.2rem;
+    font-size: 1rem;
     /* Adjust font size */
-    font-weight: 400;
+    font-weight: 600;
     line-height: 1.5rem;
     /* Adjust line height */
     letter-spacing: 1px;
@@ -124,11 +126,11 @@
 
 .coveredyou-content p {
     font-family: Roboto;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 400;
     line-height: 1.2rem;
     text-align: left;
-    color: #666;
+    color: #363636;
     margin: 0.5rem 0;
     /* Adjust margin between text contents */
 }
@@ -163,10 +165,11 @@
 }
 
 .subflow-image img {
-    width: 100%;
+    width: 95%;
     height: 100%;
     object-fit: cover;
     border-radius: 5px;
+    margin-left: 1px
 }
 
 .first-sub {
@@ -189,10 +192,30 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    margin-right: 10px
+    margin-right: 10px;
 }
 
-/* Slick Slider Arrows */
+.fourth-sub {
+    background-image: url('../../assets/images/covered-you-2-bgimg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.fifth-sub {
+    background-image: url('../../assets/images/covered-you-1-bgimg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.sixth-sub {
+    background-image: url('../../assets/images/covered-you-2-bgimg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 /* Slick Slider Arrows */
 .custom-arrow {
     width: 2rem;
@@ -247,7 +270,6 @@
     padding: 2rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin: 2rem 0rem;
-    padding: 2rem;
 }
 
 .above-headddig {
@@ -353,10 +375,9 @@
 }
 
 .slick-arrow {
-    color: #000000
+    color: #000000;
 }
 
-
 .slick-dots li.slick-active button:before {
-    opacity: 0.25
+    opacity: 0.25;
 }

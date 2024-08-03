@@ -5,6 +5,9 @@ import { CategoryContext } from "../../context/CategoryContext";
 import coverdyou1 from "../../assets/images/covered-you-1.png";
 import coverdyou2 from "../../assets/images/covered-you-2.png";
 import coverdyou3 from "../../assets/images/covered-you-3.png";
+import coverdyou4 from "../../assets/images/covered-you-4.png";
+import coverdyou5 from "../../assets/images/covered-you-5.png";
+import coverdyou6 from "../../assets/images/covered-you-6.png";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -151,11 +154,53 @@ const Maincategory = () => {
                 <br />
                 in 2 hours
               </h1>
-              <p>Electricians, Plumbers and more</p>
+              <p>Electricians,Plumbers & more</p>
               <button className="covered-book-button">Book now</button>
             </div>
             <div className="subflow-image">
               <img src={coverdyou3} alt="covered you" />
+            </div>
+          </div>
+          <div className="covered-you-sub-flow fourth-sub">
+            <div className="coveredyou-content">
+              <h1>
+                Keep pests
+                <br />
+                away
+              </h1>
+              <p>Pest control services</p>
+              <button className="covered-book-button">Book now</button>
+            </div>
+            <div className="subflow-image">
+              <img src={coverdyou4} alt="covered you" />
+            </div>
+          </div>
+          <div className="covered-you-sub-flow fifth-sub">
+            <div className="coveredyou-content">
+              <h1>
+                Maintain your kitchen
+                <br />
+                with ease
+              </h1>
+              <p>Kitchen maintenance services</p>
+              <button className="covered-book-button">Book now</button>
+            </div>
+            <div className="subflow-image">
+              <img src={coverdyou5} alt="covered you" />
+            </div>
+          </div>
+          <div className="covered-you-sub-flow sixth-sub">
+            <div className="coveredyou-content">
+              <h1>
+                Beautiful gardens
+                <br />
+                all year round
+              </h1>
+              <p>Gardening services</p>
+              <button className="covered-book-button">Book now</button>
+            </div>
+            <div className="subflow-image">
+              <img src={coverdyou6} alt="covered you" />
             </div>
           </div>
         </Slider>
