@@ -38,7 +38,7 @@ const Userprofile = () => {
             <p>My Rewards</p>
             <img src={rightarrow} alt="rightarrow" className="rightarrow" />
           </div>
-          <div className="u-p-sublink">
+          <div className="u-p-sublink" onClick={() => navigate("/coupons")}>
             <img src={coupons} alt="savedaddresses" />
             <p>Coupons</p>
             <img src={rightarrow} alt="rightarrow" className="rightarrow" />

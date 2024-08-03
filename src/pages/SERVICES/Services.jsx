@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./Services.css";
 import ScrollableTabs from "./ScrollableTabs";
 import { CategoryContext } from "../../context/CategoryContext";
@@ -25,6 +25,35 @@ const Services = () => {
   const [descriptionVisibility, setDescriptionVisibility] = useState({});
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [variantName, setVariantName] = useState("");
+  const [filteredServiceData, setFilteredServiceData] = useState([]);
+
+  useEffect(() => {
+    // Set the first variant as active by default and log it to the console
+    if (categoryData.length > 0 && selectedCategoryId) {
+      const selectedCategory = categoryData.find(
+        (category) => category._id === selectedCategoryId
+      );
+      if (selectedCategory && selectedCategory.uiVariant.length > 0) {
+        const firstVariant = selectedCategory.uiVariant[0];
+        setVariantName(firstVariant);
+        console.log("Active variant tab:", firstVariant);
+      }
+    }
+  }, [categoryData, selectedCategoryId]);
+
+  useEffect(() => {
+    if (!variantName || variantName === "none") {
+      setFilteredServiceData([]);
+    } else {
+      const filteredData = servicesData
+        ? servicesData.filter(
+            (service) =>
+              service.uiVariant && service.uiVariant.includes(variantName)
+          )
+        : [];
+      setFilteredServiceData(filteredData);
+    }
+  }, [variantName, servicesData]);
 
   if (error) {
     return <div className="error">Error: {error}</div>;
@@ -51,7 +80,7 @@ const Services = () => {
 
   const handleVariant = (variantname) => {
     setVariantName(variantname);
-    console.log(variantname, 'variant name');
+    console.log("Active variant tab:", variantname);
   };
 
   const displayServices = (filteredServiceData) => {
@@ -132,17 +161,11 @@ const Services = () => {
     (item) => item._id === selectedCategoryId
   );
 
-  const filteredServiceData = servicesData
-    ? servicesData.filter(
-        (service) => service.uiVariant && service.uiVariant.includes(variantName)
-      )
-    : [];
-
   return (
     <div className="services">
       <ScrollableTabs />
       <div>
-           {filteredCategoryData.map((uiItem) => (
+        {filteredCategoryData.map((uiItem) => (
           <div key={uiItem._id} className="variant">
             {uiItem.uiVariant.map((variant, index) => (
               <div
@@ -193,7 +216,13 @@ const Services = () => {
               <p>No additional subcategories available.</p>
             )}
           </div>
-          <div className="services-display">{displayServices(filteredServiceData)}</div>
+          <div className="services-display">
+            {variantName && variantName !== "none" ? (
+              displayServices(filteredServiceData)
+            ) : (
+              <p>Select a variant to see services.</p>
+            )}
+          </div>
         </div>
         <CartSummary />
       </div>
