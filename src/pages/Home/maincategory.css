@@ -47,7 +47,7 @@
 
 .sub-cat-con p {
     font-family: Roboto;
-    font-size: 6px;
+    font-size: 16px;
     font-weight: 700;
     line-height: 18.75px;
     color: #292c31;
@@ -71,6 +71,7 @@
     position: relative;
     cursor: grab;
     scroll-behavior: smooth;
+    border-radius: 10px;
 }
 
 .slick-list {
@@ -95,7 +96,7 @@
     background-color: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
-    margin: 0 2px;
+    margin: 0 0.5px;
     /* Increase the margin to add spacing between slides */
 }
 
@@ -173,6 +174,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+
 }
 
 .second-sub {
@@ -187,6 +189,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    margin-right: 10px
 }
 
 /* Slick Slider Arrows */
@@ -229,12 +232,12 @@
 .slick-dots li button:before {
     font-size: 12px;
     /* Size of the dots */
-    color: black;
+    color: rgb(179, 179, 179);
     /* Default color of the dots */
 }
 
 .slick-dots li.slick-active button:before {
-    color: red;
+    color: rgb(163, 163, 163);
     /* Color of the active dot */
 }
 
@@ -351,4 +354,9 @@
 
 .slick-arrow {
     color: #000000
+}
+
+
+.slick-dots li.slick-active button:before {
+    opacity: 0.25
 }
