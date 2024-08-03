@@ -54,6 +54,7 @@ const Routing = () => {
                     <Route path="/coupons" element={<Coupons />} />
                     <Route path="/rewards" element={<Rewards />} />
                     <Route path="/cart" element={<CartPage />} />
+                   
                   </Route>
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>

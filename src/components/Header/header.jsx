@@ -14,6 +14,7 @@ import LoginComponent from "../LoginComponent";
 import ChatbotComponent from "../Chat/ChatbotComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import Userprofile from "../../pages/USER-PROFILE/user-profile";
 
 const Header = ({ children }) => {
   const navigate = useNavigate();
@@ -21,12 +22,13 @@ const Header = ({ children }) => {
   const { totalItems } = useContext(CartContext); // Access totalItems from CartContext
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
+  const [isProfileMenuVisible, setProfileMenuVisible] = useState(false);
 
   const handleProfileClick = () => {
     if (!isAuthenticated) {
       setLoginVisible(true);
     } else {
-      navigate("userprofile");
+      setProfileMenuVisible(!isProfileMenuVisible);
     }
   };
 
@@ -65,7 +67,17 @@ const Header = ({ children }) => {
               />
               {totalItems > 0 && <span className="badge">{totalItems}</span>}
             </div>
-            <img src={profile} alt="icon" onClick={handleProfileClick} />
+            <div>
+              <img src={profile} alt="icon" onClick={handleProfileClick} />
+              {isProfileMenuVisible && (
+                <div className="profileMenu">
+                    <p>Saved addresses</p>
+                    <p>Bookings</p>
+                    <p>Coupons</p>
+                    <p>Rewards</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="s-h">
@@ -82,8 +94,7 @@ const Header = ({ children }) => {
             </div>
             <button className="books-button" onClick={handleBookServiceClick}>
               Book a Service
-            </button>{" "}
-            {/* Add onClick handler */}
+            </button>
           </div>
         </div>
       </div>
@@ -93,12 +104,15 @@ const Header = ({ children }) => {
             <button className="close-button" onClick={closeModal}>
               &times;
             </button>
-            <LoginComponent onLoginSuccess={closeModal} />
+            <LoginComponent onLoginSuccess={() => {
+              closeModal();
+              setProfileMenuVisible(true);
+            }} />
           </div>
         </div>
       )}
       {isChatbotVisible && <ChatbotComponent />}
-      {children} {/* Render children to include other components */}
+      {children}
     </CartProvider>
   );
 };

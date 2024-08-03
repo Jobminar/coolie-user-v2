@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef, useMemo } from "react";
 import "./Services.css";
 import ScrollableTabs from "./ScrollableTabs";
 import { CategoryContext } from "../../context/CategoryContext";
@@ -26,6 +26,27 @@ const Services = () => {
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [variantName, setVariantName] = useState("");
 
+  const initialCategoryRef = useRef(null);
+
+  useEffect(() => {
+    if (categoryData && categoryData.length > 0) {
+      const initialCategory = categoryData.find(
+        (item) => item._id === selectedCategoryId,
+      );
+      initialCategoryRef.current = initialCategory;
+      if (initialCategory) {
+        const validVariants = initialCategory.uiVariant.filter(
+          (variant) => variant.toLowerCase() !== "none",
+        );
+        if (validVariants.length > 0) {
+          setVariantName(validVariants[0]);
+        } else {
+          setVariantName(""); // Reset variant name if no valid uiVariant exists
+        }
+      }
+    }
+  }, [categoryData, selectedCategoryId]);
+
   if (error) {
     return <div className="error">Error: {error}</div>;
   }
@@ -51,7 +72,6 @@ const Services = () => {
 
   const handleVariant = (variantname) => {
     setVariantName(variantname);
-    console.log(variantname, 'variant name');
   };
 
   const displayServices = (filteredServiceData) => {
@@ -105,7 +125,7 @@ const Services = () => {
                   handleAddToCart(
                     service._id,
                     service.categoryId._id,
-                    service.subCategoryId._id
+                    service.subCategoryId._id,
                   )
                 }
               >
@@ -128,33 +148,53 @@ const Services = () => {
     }
   };
 
-  const filteredCategoryData = categoryData.filter(
-    (item) => item._id === selectedCategoryId
-  );
+  const filteredCategoryData = useMemo(() => {
+    return categoryData
+      ? categoryData.filter((item) => item._id === selectedCategoryId)
+      : [];
+  }, [categoryData, selectedCategoryId]);
 
-  const filteredServiceData = servicesData
-    ? servicesData.filter(
-        (service) => service.uiVariant && service.uiVariant.includes(variantName)
-      )
-    : [];
+  const filteredServiceData = useMemo(() => {
+    return servicesData
+      ? servicesData.filter((service) => {
+          if (variantName) {
+            return (
+              service.subCategoryId._id === selectedSubCategoryId &&
+              service.serviceVariants.some(
+                (variant) => variant.variantName === variantName,
+              )
+            );
+          }
+          return service.subCategoryId._id === selectedSubCategoryId;
+        })
+      : [];
+  }, [servicesData, selectedSubCategoryId, variantName]);
 
   return (
     <div className="services">
       <ScrollableTabs />
       <div>
-           {filteredCategoryData.map((uiItem) => (
-          <div key={uiItem._id} className="variant">
-            {uiItem.uiVariant.map((variant, index) => (
-              <div
-                key={index}
-                className={`ui-variant-item ${variant === variantName ? "active" : ""}`}
-                onClick={() => handleVariant(variant)}
-              >
-                {variant}
-              </div>
-            ))}
-          </div>
-        ))}
+        {filteredCategoryData.map((uiItem) => {
+          const validVariants = uiItem.uiVariant.filter(
+            (variant) => variant.toLowerCase() !== "none",
+          );
+          return (
+            <div key={uiItem._id} className="variant">
+              {validVariants.length > 0 &&
+                validVariants.map((variant, index) => (
+                  <div
+                    key={index}
+                    className={`ui-variant-item ${
+                      variant === variantName ? "active" : ""
+                    }`}
+                    onClick={() => handleVariant(variant)}
+                  >
+                    {variant}
+                  </div>
+                ))}
+            </div>
+          );
+        })}
       </div>
 
       <div className="services-cart-display">
@@ -193,7 +233,9 @@ const Services = () => {
               <p>No additional subcategories available.</p>
             )}
           </div>
-          <div className="services-display">{displayServices(filteredServiceData)}</div>
+          <div className="services-display">
+            {displayServices(filteredServiceData)}
+          </div>
         </div>
         <CartSummary />
       </div>
