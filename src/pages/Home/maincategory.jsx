@@ -11,6 +11,11 @@ import coverdyou6 from "../../assets/images/covered-you-6.png";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Maincategory = () => {
   const navigate = useNavigate();
@@ -29,39 +34,19 @@ const Maincategory = () => {
   };
 
   const NextArrow = (props) => {
-    const { className, style, onClick } = props;
+    const { className, onClick } = props;
     return (
-      <div
-        className={`${className} custom-arrow`}
-        style={{
-          ...style,
-          display: "flex",
-          background: "grey",
-          color: "white",
-          opacity: "0.3",
-        }}
-        onClick={onClick}
-      >
-        <span>&#10095;</span>
+      <div className={`${className} custom-arrow next-arrow`} onClick={onClick}>
+        <FontAwesomeIcon icon={faChevronRight} />
       </div>
     );
   };
 
   const PrevArrow = (props) => {
-    const { className, style, onClick } = props;
+    const { className, onClick } = props;
     return (
-      <div
-        className={`${className} custom-arrow`}
-        style={{
-          ...style,
-          display: "flex",
-          background: "grey",
-          color: "white",
-          opacity: "0.3",
-        }}
-        onClick={onClick}
-      >
-        <span>&#10094;</span>
+      <div className={`${className} custom-arrow prev-arrow`} onClick={onClick}>
+        <FontAwesomeIcon icon={faChevronLeft} />
       </div>
     );
   };

@@ -67,7 +67,6 @@
 .coveredyou-con {
     max-height: inherit;
     padding: 0.1rem;
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
     position: relative;
     cursor: grab;
     scroll-behavior: smooth;
@@ -80,9 +79,6 @@
 
 .slick-slide {
     padding: 0 19px;
-    /* commented because of jerky movements */
-    /* margin: 0 -2px; */
-    /* Increase the spacing between slides */
     box-sizing: border-box;
 }
 
@@ -91,20 +87,16 @@
     align-items: center;
     padding: 1rem;
     height: 10rem;
-    /* Decrease the height of the cards */
     min-width: 20rem;
-    /* Increase the width of the cards */
     border-radius: 10px;
     background-color: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
     margin: 0 0.5px;
-    /* Increase the margin to add spacing between slides */
 }
 
 .coveredyou-content {
     width: 65%;
-    /* Adjust width to fit the new card dimensions */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -113,15 +105,12 @@
 .coveredyou-content h1 {
     font-family: Roboto;
     font-size: 1rem;
-    /* Adjust font size */
     font-weight: 600;
     line-height: 1.5rem;
-    /* Adjust line height */
     letter-spacing: 1px;
     text-align: left;
     color: #333;
     margin: 0.5rem 0;
-    /* Adjust margin between text contents */
 }
 
 .coveredyou-content p {
@@ -132,14 +121,12 @@
     text-align: left;
     color: #363636;
     margin: 0.5rem 0;
-    /* Adjust margin between text contents */
 }
 
 .covered-book-button {
     width: 8rem;
     height: 2.5rem;
     margin-top: 0.5rem;
-    /* Adjust margin */
     background-color: #007bff;
     border: none;
     border-radius: 5px;
@@ -154,9 +141,7 @@
 
 .subflow-image {
     width: 10rem;
-    /* Adjust width to fit the new card dimensions */
     height: 10rem;
-    /* Adjust height to fit the new card dimensions */
     position: absolute;
     right: 0.5rem;
     top: 50%;
@@ -169,7 +154,7 @@
     height: 100%;
     object-fit: cover;
     border-radius: 5px;
-    margin-left: 1px
+    margin-left: 1px;
 }
 
 .first-sub {
@@ -177,7 +162,6 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
 }
 
 .second-sub {
@@ -220,164 +204,48 @@
 .custom-arrow {
     width: 2rem;
     height: 2rem;
-    background: rgb(255, 255, 255);
-    /* Change arrow color to black for visibility */
-    color: white;
-    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 1.5rem;
-    z-index: 2;
-    /* Ensure arrows are above other content */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    cursor: pointer;
+    background: transparent;
+    color: black;
 }
 
-.slick-prev {
-    left: 10px;
-    z-index: 2;
+.slick-prev:before,
+.slick-next:before {
+    font-family: 'slick';
+    font-size: 0;
+    line-height: 1;
+    opacity: 0;
 }
 
-.slick-next {
-    right: 10px;
-    z-index: 2;
+.custom-prev-arrow {
+    left: -25px;
+}
+
+.custom-next-arrow {
+    right: -25px;
 }
 
 .slick-dots {
     bottom: -40px;
-    /* Adjust the position of dots */
 }
 
 .slick-dots li {
     margin: 0 5px;
-    /* Space between dots */
 }
 
 .slick-dots li button:before {
     font-size: 12px;
-    /* Size of the dots */
     color: rgb(179, 179, 179);
-    /* Default color of the dots */
 }
 
 .slick-dots li.slick-active button:before {
     color: rgb(163, 163, 163);
-    /* Color of the active dot */
-}
-
-/* How It Works Styles */
-.how-it-works-main-con {
-    min-height: 10rem;
-    padding: 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 2rem 0rem;
-}
-
-.above-headddig {
-    font-family: Roboto Condensed;
-    font-size: 3.2rem;
-    font-weight: 700;
-    line-height: 3.75rem;
-    text-align: left;
-}
-
-.above-headddig span {
-    font-family: Roboto Condensed;
-    font-size: 3.2rem;
-    font-weight: 300;
-    line-height: 3.75rem;
-    text-align: left;
-    color: #000000;
-    opacity: 55%;
-}
-
-.how-main-flow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    column-gap: 2rem;
-}
-
-.how-sub-flow {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-}
-
-.how-flow {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.how-flow p {
-    font-family: Roboto;
-    font-size: 1.6rem;
-    font-weight: 400;
-    line-height: 2.2rem;
-    text-align: center;
-    margin-top: 2rem;
-}
-
-.how-image {
-    width: 7rem;
-    height: 7rem;
-    border-radius: 50%;
-    background-color: #e1e5f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.how-image:hover {
-    background-color: #ffb800;
-    cursor: pointer;
-}
-
-.how-image img {
-    width: 3.5rem;
-    height: 3.5rem;
-}
-
-.arrow-container {
-    position: absolute;
-    top: 40%;
-    left: 100%;
-    transform: translate(-1%, -50%);
-}
-
-.arrow-container img {
-    width: auto;
-    height: 2rem;
-}
-
-.final-flow {
-    display: flex;
-    justify-content: left;
-    align-items: center;
-}
-
-.covered-you-icon {
-    width: 2rem;
-    height: 2rem;
-}
-
-.covered-you-img {
-    width: 3rem;
-    height: 3rem;
-}
-
-.covered-you-img img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-}
-
-.slick-arrow {
-    color: #000000;
-}
-
-.slick-dots li.slick-active button:before {
-    opacity: 0.25;
 }
