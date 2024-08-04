@@ -15,6 +15,10 @@ import ChatbotComponent from "../Chat/ChatbotComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import Userprofile from "../../pages/USER-PROFILE/user-profile";
+import account from '../../assets/images/account.png'
+import addresses from '../../assets/images/myaddresses.png'
+import bookings from '../../assets/images/mybookings.png'
+import logout from '../../assets/images/logout.png'
 
 const Header = ({ children }) => {
   const navigate = useNavigate();
@@ -71,10 +75,22 @@ const Header = ({ children }) => {
               <img src={profile} alt="icon" onClick={handleProfileClick} />
               {isProfileMenuVisible && (
                 <div className="profileMenu">
-                    <p>Saved addresses</p>
-                    <p>Bookings</p>
-                    <p>Coupons</p>
-                    <p>Rewards</p>
+                   <div className="profile-list">
+                    <img src={account} alt="account"/>
+                      Account
+                  </div>
+                  <div className="profile-list">
+                  <img src={addresses} alt="account"/>
+                      My Addresses
+                  </div>
+                  <div className="profile-list">
+                  <img src={bookings} alt="account"/>
+                      My Bookings
+                  </div>
+                  <div className="profile-list">
+                  <img src={logout} alt="account"/>
+                      Log Out
+                  </div>
                 </div>
               )}
             </div>
