@@ -5,6 +5,10 @@ import acRepair from "../../../assets/images/AC-repair.png";
 import purifierService from "../../../assets/images/purifier-service.png";
 import washingMachineRepair from "../../../assets/images/Washing-machine-repair.png";
 import fanRepair from "../../../assets/images/fan-repair.png";
+import newACInstallation from "../../../assets/images/AC-installation.png";
+import tvRepair from "../../../assets/images/TV-repair.png";
+import doorbellInstallation from "../../../assets/images/Doorbell-installation.png";
+import interiorLightingDevices from "../../../assets/images/Lighting-Repair.png";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -33,6 +37,30 @@ const ApplianceRepair = () => {
       name: "Ceiling Fan Repair",
       price: "Starting at ₹50",
       image: fanRepair,
+    },
+    {
+      id: 5,
+      name: "AC Maintainance",
+      price: "Starting at ₹1000",
+      image: newACInstallation,
+    },
+    {
+      id: 6,
+      name: "TV Repair",
+      price: "Starting at ₹500",
+      image: tvRepair,
+    },
+    {
+      id: 7,
+      name: "Doorbell Installation",
+      price: "Starting at ₹150",
+      image: doorbellInstallation,
+    },
+    {
+      id: 8,
+      name: "Interior Lighting",
+      price: "Starting at ₹200",
+      image: interiorLightingDevices,
     },
   ];
 
