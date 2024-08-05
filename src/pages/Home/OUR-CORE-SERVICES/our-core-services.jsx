@@ -44,7 +44,7 @@ const Ourcoreservices = () => {
         className={`${className} ourcore-custom-next-arrow`}
         style={{
           ...style,
-          right: "-10px",
+          right: "-5px",
           zIndex: 2,
         }}
         onClick={onClick}
@@ -61,7 +61,7 @@ const Ourcoreservices = () => {
         className={`${className} ourcore-custom-prev-arrow`}
         style={{
           ...style,
-          left: "-50px",
+          left: "-55px",
           zIndex: 2,
         }}
         onClick={onClick}

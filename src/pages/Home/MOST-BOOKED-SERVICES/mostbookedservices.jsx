@@ -44,7 +44,7 @@ const Mostbookedservices = () => {
         className={`${className} mostbooked-custom-next-arrow`}
         style={{
           ...style,
-          right: "-10px",
+          right: "-5px",
           zIndex: 2,
         }}
         onClick={onClick}
@@ -61,7 +61,7 @@ const Mostbookedservices = () => {
         className={`${className} mostbooked-custom-prev-arrow`}
         style={{
           ...style,
-          left: "-50px",
+          left: "-55px",
           zIndex: 2,
         }}
         onClick={onClick}

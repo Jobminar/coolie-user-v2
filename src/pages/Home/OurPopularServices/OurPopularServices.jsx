@@ -71,7 +71,7 @@ const OurPopularServices = () => {
         className={`${className} popular-custom-next-arrow`}
         style={{
           ...style,
-          right: "-10px",
+          right: "-5px",
           zIndex: 2,
         }}
         onClick={onClick}
@@ -88,7 +88,7 @@ const OurPopularServices = () => {
         className={`${className} popular-custom-prev-arrow`}
         style={{
           ...style,
-          left: "-50px",
+          left: "-55px",
           zIndex: 2,
         }}
         onClick={onClick}
