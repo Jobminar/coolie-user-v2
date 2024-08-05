@@ -41,7 +41,7 @@
 }
 
 .appliance-repair-image {
-    width: 14rem;
+    width: 13.25rem;
     height: 10rem;
 }
 
@@ -64,6 +64,29 @@
     margin: 0px;
     margin-top: 10px;
     margin-left: 2px;
+    width: 10rem;
+    /* Set a consistent width */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: white;
+}
+
+.appliance-repair-name:hover {
+    overflow: visible;
+    white-space: nowrap;
+    text-overflow: clip;
+    /* animation: marquee 10s linear infinite; */
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 .appliance-repair-price {
@@ -108,20 +131,20 @@
     align-items: center;
     font-size: 1.5rem;
     position: absolute;
-    top: 50%;
+    top: 35%;
     transform: translateY(-50%);
     z-index: 2;
 }
 
 .appliance-custom-prev-arrow {
-    left: -25px;
+
     color: rgb(205, 205, 205);
     background-color: transparent;
     /* Adjust position to move the arrow away from the carousel */
 }
 
 .appliance-custom-next-arrow {
-    right: -25px;
+
     color: rgb(205, 205, 205);
     background-color: transparent;
     /* Adjust position to move the arrow away from the carousel */

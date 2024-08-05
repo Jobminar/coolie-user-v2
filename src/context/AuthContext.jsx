@@ -1,16 +1,21 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+// AuthContext.js
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+} from "react";
 import { auth } from "../config/firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast, Toaster } from "react-hot-toast";
-import useUserLocation from "../hooks/useUserLocation"; // Import the custom hook
-import CaptchaComponent from "../components/Security/CaptchaComponent"; // Import CaptchaComponent
+import useUserLocation from "../hooks/useUserLocation";
+import CaptchaComponent from "../components/Security/CaptchaComponent";
 
-// Create AuthContext
 const AuthContext = createContext();
 
-// AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -18,12 +23,56 @@ export const AuthProvider = ({ children }) => {
   const [timeoutId, setTimeoutId] = useState(null);
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [userId, setUserId] = useState(null);
-  // Get user location using the custom hook
+  const [userCity, setUserCity] = useState(
+    sessionStorage.getItem("selectedCity") || null,
+  );
+  const userLocationRef = useRef({ latitude: null, longitude: null });
+
   const {
     location: userLocation,
     error: locationError,
     setLocation: setUserLocation,
   } = useUserLocation();
+
+  const fetchCityName = async (latitude, longitude) => {
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${
+          import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+        }`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (data.features && data.features.length > 0) {
+          const city = data.features.find((feature) =>
+            feature.place_type.includes("place"),
+          );
+          return city ? city.text : "Unknown location";
+        }
+      } else {
+        console.error("Failed to fetch city name from Mapbox.");
+      }
+    } catch (error) {
+      console.error("Error fetching city name from Mapbox:", error);
+    }
+    return "Unknown location";
+  };
+
+  useEffect(() => {
+    if (userLocation && !sessionStorage.getItem("selectedCity")) {
+      const { latitude, longitude } = userLocation;
+      fetchCityName(latitude, longitude).then((city) => {
+        setUserCity(city);
+        userLocationRef.current = { latitude, longitude };
+      });
+    }
+  }, [userLocation]);
+
+  useEffect(() => {
+    if (userCity) {
+      sessionStorage.setItem("selectedCity", userCity);
+    }
+  }, [userCity]);
 
   const fetchUserInfo = async (userId) => {
     try {
@@ -123,7 +172,7 @@ export const AuthProvider = ({ children }) => {
       name: name || userInfo.name,
       displayName: displayName || userInfo.displayName,
       photoURL: photoURL || userInfo.photoURL,
-      providerId: providerId || userInfo.providerId, //Google provider
+      providerId: providerId || userInfo.providerId,
     };
 
     try {
@@ -146,7 +195,7 @@ export const AuthProvider = ({ children }) => {
         sessionStorage.setItem("jwtToken", data.token);
         sessionStorage.setItem("userId", data.user._id);
         sessionStorage.setItem("expirationTime", expirationTime);
-        sessionStorage.setItem("phone", data.user.phone); // Store phone number
+        sessionStorage.setItem("phone", data.user.phone);
         setSessionTimeout(60 * 60 * 1000);
         setUser(data.user);
         setIsAuthenticated(true);
@@ -177,6 +226,7 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.removeItem("userId");
     sessionStorage.removeItem("expirationTime");
     sessionStorage.removeItem("phone");
+    sessionStorage.removeItem("selectedCity");
     setUser(null);
     setIsAuthenticated(false);
     if (timeoutId) clearTimeout(timeoutId);
@@ -187,7 +237,7 @@ export const AuthProvider = ({ children }) => {
     if (timeoutId) clearTimeout(timeoutId);
     const newTimeoutId = setTimeout(() => {
       if (!captchaVerified) {
-        showCaptcha(); // Show CAPTCHA 20 seconds before session expiration
+        showCaptcha();
       } else {
         logout();
       }
@@ -203,7 +253,6 @@ export const AuthProvider = ({ children }) => {
           onVerify={(isVerified) => {
             setCaptchaVerified(isVerified);
             if (isVerified) {
-              // Extend the session if CAPTCHA is verified
               const newExpirationTime = Date.now() + 60 * 60 * 1000;
               sessionStorage.setItem("expirationTime", newExpirationTime);
               setSessionTimeout(60 * 60 * 1000);
@@ -244,12 +293,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUserLocation = async (latitude, longitude) => {
+    userLocationRef.current = { latitude, longitude };
+    sessionStorage.setItem("latitude", latitude);
+    sessionStorage.setItem("longitude", longitude);
+
+    const city = await fetchCityName(latitude, longitude);
+    setUserCity(city);
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
         userLocation,
-        setUserLocation, // Include setUserLocation in context
+        userCity,
+        fetchCityName,
+        setUserLocation,
+        updateUserLocation,
         login,
         isAuthenticated,
         sendOtp,

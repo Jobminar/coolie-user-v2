@@ -264,15 +264,16 @@
 .main-h {
     position: relative;
     /* Other styles */
-  }
-  
-  .profileMenu {
+}
+
+.profileMenu {
     position: absolute;
-    top: 2.5rem; /* Adjust as needed */
+    top: 2.5rem;
+    /* Adjust as needed */
     right: 1.5rem;
     width: auto;
     height: auto;
-    padding:1rem 0rem;
+    padding: 1rem 0rem;
     margin: 0;
     background-color: white;
     border: 1px solid #ccc;
@@ -283,10 +284,11 @@
     align-items: center;
     row-gap: 1.5rem;
     width: 13rem;
-    min-height:10rem ;
+    min-height: 10rem;
     border-radius: 10px;
-  }
-  .profile-list{
+}
+
+.profile-list {
     font-family: Nunito Sans;
     font-size: 20px;
     font-weight: 600;
@@ -298,9 +300,10 @@
     grid-template-columns: 20% 70%;
     justify-content: center;
     align-items: center;
-    padding:0.5rem 0rem ;
-    
-  }
-  .profile-list:hover{
+    padding: 0.5rem 0rem;
+
+}
+
+.profile-list:hover {
     cursor: pointer;
-  }
+}

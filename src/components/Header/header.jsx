@@ -1,7 +1,8 @@
-import React, { useState, useContext } from "react";
+// Header.jsx
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { CartContext, CartProvider } from "../../context/CartContext"; // Import CartContext
+import { CartContext, CartProvider } from "../../context/CartContext";
 import "./header.css";
 import playstore from "../../assets/images/play-store.svg";
 import apple from "../../assets/images/apple.svg";
@@ -15,18 +16,40 @@ import ChatbotComponent from "../Chat/ChatbotComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import Userprofile from "../../pages/USER-PROFILE/user-profile";
-import account from '../../assets/images/account.png'
-import addresses from '../../assets/images/myaddresses.png'
-import bookings from '../../assets/images/mybookings.png'
-import logout from '../../assets/images/logout.png'
+import account from "../../assets/images/account.png";
+import addresses from "../../assets/images/myaddresses.png";
+import bookings from "../../assets/images/mybookings.png";
+import logout from "../../assets/images/logout.png";
+import CitySearchComponent from "./CitySearchComponent";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const Header = ({ children }) => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const { totalItems } = useContext(CartContext); // Access totalItems from CartContext
+  const { isAuthenticated, userCity, fetchCityName, updateUserLocation } =
+    useAuth();
+  const { totalItems } = useContext(CartContext);
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
   const [isProfileMenuVisible, setProfileMenuVisible] = useState(false);
+  const selectedCityRef = useRef(
+    sessionStorage.getItem("selectedCity") || userCity || "",
+  );
+  const [locationQuery, setLocationQuery] = useState(selectedCityRef.current);
+  const [selectedCity, setSelectedCity] = useState(selectedCityRef.current);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+  useEffect(() => {
+    if (userCity) {
+      selectedCityRef.current = userCity;
+      setLocationQuery(userCity);
+      setSelectedCity(userCity);
+    }
+  }, [userCity]);
+
+  useEffect(() => {
+    sessionStorage.setItem("selectedCity", selectedCityRef.current);
+  }, [selectedCity]);
 
   const handleProfileClick = () => {
     if (!isAuthenticated) {
@@ -45,11 +68,88 @@ const Header = ({ children }) => {
   };
 
   const handleBookServiceClick = () => {
-    navigate("/services"); // Navigate to /services when button is clicked
+    navigate("/services");
   };
 
   const handleCartClick = () => {
-    navigate("/cart"); // Navigate to /cart when cart icon is clicked
+    navigate("/cart");
+  };
+
+  const handleCitySelect = (city) => {
+    confirmAlert({
+      title: "Confirm Location Change",
+      message: "Are you sure you want to change your location?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            selectedCityRef.current = city.name;
+            setSelectedCity(city.name);
+            setLocationQuery(city.name);
+            setIsDropdownVisible(false);
+            updateUserLocation(city.coordinates[1], city.coordinates[0]);
+            sessionStorage.setItem("selectedCity", city.name);
+          },
+        },
+        {
+          label: "No",
+          onClick: () => setIsDropdownVisible(false),
+        },
+      ],
+      closeOnClickOutside: false,
+    });
+  };
+
+  const handleInputChange = (e) => {
+    setLocationQuery(e.target.value);
+    setIsDropdownVisible(true);
+  };
+
+  const handleLocationIconClick = () => {
+    confirmAlert({
+      title: "Use Current Location",
+      message: "Do you want to use your current location?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const { latitude, longitude } = position.coords;
+                  fetchCityName(latitude, longitude).then((cityName) => {
+                    selectedCityRef.current = cityName;
+                    setSelectedCity(cityName);
+                    setLocationQuery(cityName);
+                    updateUserLocation(latitude, longitude);
+                    sessionStorage.setItem("selectedCity", cityName);
+                  });
+                },
+                (error) => {
+                  console.error("Error getting location:", error);
+                  if (error.code === 1) {
+                    alert(
+                      "Location access is denied. Please allow location access in your browser settings.",
+                    );
+                  } else {
+                    alert(
+                      "An error occurred while fetching your location. Please try again.",
+                    );
+                  }
+                },
+              );
+            } else {
+              alert("Geolocation is not supported by this browser.");
+            }
+          },
+        },
+        {
+          label: "No",
+          onClick: () => {},
+        },
+      ],
+      closeOnClickOutside: false,
+    });
   };
 
   return (
@@ -75,21 +175,21 @@ const Header = ({ children }) => {
               <img src={profile} alt="icon" onClick={handleProfileClick} />
               {isProfileMenuVisible && (
                 <div className="profileMenu">
-                   <div className="profile-list">
-                    <img src={account} alt="account"/>
-                      Account
+                  <div className="profile-list">
+                    <img src={account} alt="account" />
+                    Account
                   </div>
                   <div className="profile-list">
-                  <img src={addresses} alt="account"/>
-                      My Addresses
+                    <img src={addresses} alt="account" />
+                    My Addresses
                   </div>
                   <div className="profile-list">
-                  <img src={bookings} alt="account"/>
-                      My Bookings
+                    <img src={bookings} alt="account" />
+                    My Bookings
                   </div>
                   <div className="profile-list">
-                  <img src={logout} alt="account"/>
-                      Log Out
+                    <img src={logout} alt="account" />
+                    Log Out
                   </div>
                 </div>
               )}
@@ -102,8 +202,23 @@ const Header = ({ children }) => {
           </div>
           <div className="s-h-s">
             <div className="location">
-              <img src={location} alt="location" />
-              <input placeholder="Hyderabad" />
+              <img
+                src={location}
+                alt="location"
+                onClick={handleLocationIconClick}
+              />
+              <input
+                placeholder="City"
+                value={locationQuery}
+                onChange={handleInputChange}
+              />
+              {locationQuery && isDropdownVisible && (
+                <CitySearchComponent
+                  query={locationQuery}
+                  onSelect={handleCitySelect}
+                  onClose={() => setIsDropdownVisible(false)}
+                />
+              )}
             </div>
             <div className="search-header">
               <input placeholder="search for a service ex: Room cleaning, kitchen cleaning" />
@@ -120,10 +235,12 @@ const Header = ({ children }) => {
             <button className="close-button" onClick={closeModal}>
               &times;
             </button>
-            <LoginComponent onLoginSuccess={() => {
-              closeModal();
-              setProfileMenuVisible(true);
-            }} />
+            <LoginComponent
+              onLoginSuccess={() => {
+                closeModal();
+                setProfileMenuVisible(true);
+              }}
+            />
           </div>
         </div>
       )}

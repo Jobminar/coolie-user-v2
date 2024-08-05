@@ -71,7 +71,7 @@ const ApplianceRepair = () => {
         className={`${className} appliance-custom-next-arrow`}
         style={{
           ...style,
-          right: "-5px",
+          right: "-2rem",
           zIndex: 2,
         }}
         onClick={onClick}
@@ -88,7 +88,7 @@ const ApplianceRepair = () => {
         className={`${className} appliance-custom-prev-arrow`}
         style={{
           ...style,
-          left: "-55px",
+          left: "-3.5rem",
           zIndex: 2,
         }}
         onClick={onClick}
@@ -102,9 +102,9 @@ const ApplianceRepair = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 4,
+    slidesToShow: 5,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: false,
     autoplaySpeed: 3000,
     arrows: true,
     nextArrow: <NextArrow />,
