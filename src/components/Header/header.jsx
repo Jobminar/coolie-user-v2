@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { CartContext, CartProvider } from "../../context/CartContext"; // Import CartContext
@@ -18,15 +18,53 @@ import Userprofile from "../../pages/USER-PROFILE/user-profile";
 import account from '../../assets/images/account.png'
 import addresses from '../../assets/images/myaddresses.png'
 import bookings from '../../assets/images/mybookings.png'
-import logout from '../../assets/images/logout.png'
+import logout from '../../assets/images/logout.png';
+
+const useTypewriter = (texts, speed = 100, pause = 2000) => {
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    if (subIndex === texts[index].length + 1 && !deleting) {
+      setTimeout(() => setDeleting(true), pause);
+      return;
+    }
+
+    if (subIndex === 0 && deleting) {
+      setDeleting(false);
+      setIndex((prev) => (prev + 1) % texts.length);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setSubIndex((prev) => prev + (deleting ? -1 : 1));
+    }, deleting ? speed / 2 : speed);
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, deleting, index, texts, speed, pause]);
+
+  return deleting
+    ? texts[index].substring(0, subIndex)
+    : texts[index].substring(0, subIndex);
+};
 
 const Header = ({ children }) => {
   const navigate = useNavigate();
+    const { logout } = useAuth(); 
   const { isAuthenticated } = useAuth();
   const { totalItems } = useContext(CartContext); // Access totalItems from CartContext
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
   const [isProfileMenuVisible, setProfileMenuVisible] = useState(false);
+
+  const placeholders = [
+    " Room cleaning, kitchen cleaning",
+    " Laundry, dishwashing",
+    " Gardening, pet sitting"
+  ];
+
+  const placeholder = useTypewriter(placeholders);
 
   const handleProfileClick = () => {
     if (!isAuthenticated) {
@@ -75,22 +113,10 @@ const Header = ({ children }) => {
               <img src={profile} alt="icon" onClick={handleProfileClick} />
               {isProfileMenuVisible && (
                 <div className="profileMenu">
-                   <div className="profile-list">
-                    <img src={account} alt="account"/>
-                      Account
-                  </div>
-                  <div className="profile-list">
-                  <img src={addresses} alt="account"/>
-                      My Addresses
-                  </div>
-                  <div className="profile-list">
-                  <img src={bookings} alt="account"/>
-                      My Bookings
-                  </div>
-                  <div className="profile-list">
-                  <img src={logout} alt="account"/>
-                      Log Out
-                  </div>
+                  <div className="profile-list">Account</div>
+                  <div className="profile-list"  onClick={() => {navigate("/addresses")}}>My Addresses</div>
+                  <div className="profile-list" onClick={() => navigate("/bookings")}>My Bookings</div>
+                  <div className="profile-list" >Log Out</div>
                 </div>
               )}
             </div>
@@ -98,7 +124,7 @@ const Header = ({ children }) => {
         </div>
         <div className="s-h">
           <div className="s-h-logo">
-            <img src={logo} alt="logo" />
+            <img src={logo} alt="logo" onClick={(navigate('/'))}/>
           </div>
           <div className="s-h-s">
             <div className="location">
@@ -106,7 +132,10 @@ const Header = ({ children }) => {
               <input placeholder="Hyderabad" />
             </div>
             <div className="search-header">
-              <input placeholder="search for a service ex: Room cleaning, kitchen cleaning" />
+              <input
+                placeholder={`search for a service ex:${placeholder}`}
+                readOnly
+              />
             </div>
             <button className="books-button" onClick={handleBookServiceClick}>
               Book a Service
@@ -120,10 +149,12 @@ const Header = ({ children }) => {
             <button className="close-button" onClick={closeModal}>
               &times;
             </button>
-            <LoginComponent onLoginSuccess={() => {
-              closeModal();
-              setProfileMenuVisible(true);
-            }} />
+            <LoginComponent
+              onLoginSuccess={() => {
+                closeModal();
+                setProfileMenuVisible(true);
+              }}
+            />
           </div>
         </div>
       )}
