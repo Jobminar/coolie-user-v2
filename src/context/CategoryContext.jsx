@@ -62,6 +62,12 @@ export const CategoryProvider = ({ children }) => {
     }
   }, [selectedSubCategoryId]);
 
+  useEffect(() => {
+    if (selectedCategoryId) {
+      console.log(selectedCategoryId, "selected  category id in main");
+    }
+  }, [setSelectedCategoryId]);
+
   // fetch service
   useEffect(() => {
     if (selectedCategoryId && selectedSubCategoryId) {
