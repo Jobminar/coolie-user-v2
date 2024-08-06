@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave } from "@fortawesome/free-solid-svg-icons"; // Import the save icon
-import { toast } from "react-toastify"; // Import toast for error messages
+import { faSave } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 const AddressForm = ({ addressData, setAddressData, handleSaveAddress }) => {
   const [errors, setErrors] = useState({});
@@ -120,6 +120,29 @@ const AddressForm = ({ addressData, setAddressData, handleSaveAddress }) => {
           className={errors.state ? "input-error" : ""}
         />
         {errors.state && <span className="error-message">{errors.state}</span>}
+      </div>
+      <div className="radio-group">
+        <p>Contact:</p>
+        <label>
+          <input
+            type="radio"
+            name="bookingType"
+            value="self"
+            checked={addressData.bookingType === "self"}
+            onChange={handleChange}
+          />
+          My Self
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="bookingType"
+            value="others"
+            checked={addressData.bookingType === "others"}
+            onChange={handleChange}
+          />
+          Booking for Others
+        </label>
       </div>
       <button className="save-address-btn" onClick={handleSave}>
         <FontAwesomeIcon icon={faSave} /> <span>SAVE ADDRESS</span>

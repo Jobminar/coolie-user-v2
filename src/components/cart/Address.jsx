@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useCookies } from "react-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCrosshairs,
-  faEdit,
-  faSave,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faSave } from "@fortawesome/free-solid-svg-icons";
 import "./Address.css";
-import LocationModal from "./LocationModal";
 import { useAuth } from "../../context/AuthContext";
 import { saveAddress, getSavedAddresses } from "./api/address-api";
 import { ToastContainer, toast } from "react-toastify";
@@ -39,7 +34,6 @@ const Address = ({ onNext }) => {
     userId: user?._id || "",
   });
 
-  const [showModal, setShowModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showSavedAddresses, setShowSavedAddresses] = useState(true);
   const [savedAddresses, setSavedAddresses] = useState([]);
@@ -47,7 +41,6 @@ const Address = ({ onNext }) => {
 
   const initialRender = useRef(true);
   const addressDataRef = useRef(addressData);
-  const showModalRef = useRef(showModal);
   const showFormRef = useRef(showForm);
   const showSavedAddressesRef = useRef(showSavedAddresses);
   const savedAddressesRef = useRef(savedAddresses);
@@ -58,7 +51,6 @@ const Address = ({ onNext }) => {
     if (savedState) {
       const {
         addressData,
-        showModal,
         showForm,
         showSavedAddresses,
         savedAddresses,
@@ -66,14 +58,12 @@ const Address = ({ onNext }) => {
       } = JSON.parse(savedState);
 
       setAddressData(addressData);
-      setShowModal(showModal);
       setShowForm(showForm);
       setShowSavedAddresses(showSavedAddresses);
       setSavedAddresses(savedAddresses);
       setSelectedAddress(selectedAddress);
 
       addressDataRef.current = addressData;
-      showModalRef.current = showModal;
       showFormRef.current = showForm;
       showSavedAddressesRef.current = showSavedAddresses;
       savedAddressesRef.current = savedAddresses;
@@ -89,7 +79,6 @@ const Address = ({ onNext }) => {
 
     const state = {
       addressData: addressDataRef.current,
-      showModal: showModalRef.current,
       showForm: showFormRef.current,
       showSavedAddresses: showSavedAddressesRef.current,
       savedAddresses: savedAddressesRef.current,
@@ -99,7 +88,6 @@ const Address = ({ onNext }) => {
     localStorage.setItem("addressState", JSON.stringify(state));
   }, [
     addressData,
-    showModal,
     showForm,
     showSavedAddresses,
     savedAddresses,
@@ -144,6 +132,13 @@ const Address = ({ onNext }) => {
     setAddressData((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+  };
+
+  const handleBookingTypeChange = (e) => {
+    setAddressData((prevState) => ({
+      ...prevState,
+      bookingType: e.target.value,
     }));
   };
 
@@ -218,42 +213,35 @@ const Address = ({ onNext }) => {
     );
   }, [addressData, setCookie]);
 
-  const parseAddress = (addressString) => {
-    const parts = addressString.split(", ");
-    return {
-      address: parts.slice(0, 2).join(", "),
-      pincode: parts[2] || "",
-      city: "Hyderabad",
-      landmark: "Medchal-Malkajgiri",
-      state: parts[6] || "Telangana",
-    };
-  };
-
-  const handleLocationSelect = (location) => {
-    const parsedAddress = parseAddress(location.address);
-    setAddressData((prevState) => ({
-      ...prevState,
-      ...parsedAddress,
-      latitude: Number(location.latitude), // Ensure latitude is a number
-      longitude: Number(location.longitude), // Ensure longitude is a number
-    }));
-  };
+  const filteredAddresses = savedAddresses.filter(
+    (address) => address.bookingType === addressData.bookingType,
+  );
 
   return (
     <div className="address-container">
       <ToastContainer />
-      <p className="location-option" onClick={() => setShowModal(true)}>
-        <FontAwesomeIcon icon={faCrosshairs} /> Use Current LOCATION
-      </p>
       <div
         className="toggle-saved-addresses"
         onClick={handleShowSavedAddresses}
       >
         <FontAwesomeIcon icon={faSave} /> <span>Show Saved Addresses</span>
       </div>
+      {showSavedAddresses && (
+        <div className="dropdown-filter">
+          <label htmlFor="bookingType">Filter Addresses By:</label>
+          <select
+            name="bookingType"
+            value={addressData.bookingType}
+            onChange={handleBookingTypeChange}
+          >
+            <option value="self">To Self</option>
+            <option value="others">Booking for Others</option>
+          </select>
+        </div>
+      )}
       {showSavedAddresses &&
-        (savedAddresses.length > 0 ? (
-          savedAddresses.map((address, index) => (
+        (filteredAddresses.length > 0 ? (
+          filteredAddresses.map((address, index) => (
             <div key={index} className="saved-address">
               <input
                 type="radio"
@@ -278,29 +266,6 @@ const Address = ({ onNext }) => {
         ) : (
           <p>No address available</p>
         ))}
-      <div className="radio-group">
-        <p>Contact:</p>
-        <label>
-          <input
-            type="radio"
-            name="bookingType"
-            value="self"
-            checked={addressData.bookingType === "self"}
-            onChange={handleChange}
-          />
-          My Self
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="bookingType"
-            value="others"
-            checked={addressData.bookingType === "others"}
-            onChange={handleChange}
-          />
-          Booking for Others
-        </label>
-      </div>
       <div className="add-new-address" onClick={() => setShowForm(!showForm)}>
         <FontAwesomeIcon icon={faEdit} />
         <span>Add New Address & Mobile Number</span>
@@ -323,15 +288,6 @@ const Address = ({ onNext }) => {
           </button>
         </div>
       </div>
-      {showModal && (
-        <LocationModal
-          onClose={() => setShowModal(false)}
-          onLocationSelect={handleLocationSelect}
-          lat={initialLocation.latitude || 0}
-          lng={initialLocation.longitude || 0}
-          initializeMap={true}
-        />
-      )}
     </div>
   );
 };

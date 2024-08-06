@@ -35,16 +35,30 @@
     margin-right: 5px;
 }
 
-.location-option {
-    color: #093ecf;
-    cursor: pointer;
+.dropdown-filter {
     display: flex;
     align-items: center;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
-.location-option svg {
-    margin-right: 5px;
+.dropdown-filter label {
+    color: #093ecf;
+    font-weight: 500;
+}
+
+.dropdown-filter select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 14px;
+    color: #333;
+}
+
+.dropdown-filter select:focus {
+    border-color: #0988cf;
+    outline: none;
 }
 
 .add-new-address {
@@ -199,7 +213,7 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 0;
-    padding: 0 0.1rem
+    padding: 0 0.1rem;
 }
 
 .address-totals-info {
@@ -232,7 +246,7 @@
     border-radius: 50px;
     cursor: pointer;
     width: 100%;
-    margin-top: 0.1rem
+    margin-top: 0.1rem;
 }
 
 .go-to-address-btn:hover {

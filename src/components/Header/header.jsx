@@ -1,4 +1,3 @@
-// Header.jsx
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -15,7 +14,6 @@ import LoginComponent from "../LoginComponent";
 import ChatbotComponent from "../Chat/ChatbotComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-import Userprofile from "../../pages/USER-PROFILE/user-profile";
 import account from "../../assets/images/account.png";
 import addresses from "../../assets/images/myaddresses.png";
 import bookings from "../../assets/images/mybookings.png";
@@ -24,10 +22,47 @@ import CitySearchComponent from "./CitySearchComponent";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 
+const useTypewriter = (texts, speed = 100, pause = 2000) => {
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    if (subIndex === texts[index].length + 1 && !deleting) {
+      setTimeout(() => setDeleting(true), pause);
+      return;
+    }
+
+    if (subIndex === 0 && deleting) {
+      setDeleting(false);
+      setIndex((prev) => (prev + 1) % texts.length);
+      return;
+    }
+
+    const timeout = setTimeout(
+      () => {
+        setSubIndex((prev) => prev + (deleting ? -1 : 1));
+      },
+      deleting ? speed / 2 : speed,
+    );
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, deleting, index, texts, speed, pause]);
+
+  return deleting
+    ? texts[index].substring(0, subIndex)
+    : texts[index].substring(0, subIndex);
+};
+
 const Header = ({ children }) => {
   const navigate = useNavigate();
-  const { isAuthenticated, userCity, fetchCityName, updateUserLocation } =
-    useAuth();
+  const {
+    isAuthenticated,
+    userCity,
+    fetchCityName,
+    updateUserLocation,
+    logout,
+  } = useAuth();
   const { totalItems } = useContext(CartContext);
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
@@ -51,6 +86,14 @@ const Header = ({ children }) => {
     sessionStorage.setItem("selectedCity", selectedCityRef.current);
   }, [selectedCity]);
 
+  const placeholders = [
+    " Room cleaning, kitchen cleaning",
+    " Laundry, dishwashing",
+    " Gardening, pet sitting",
+  ];
+
+  const placeholder = useTypewriter(placeholders);
+
   const handleProfileClick = () => {
     if (!isAuthenticated) {
       setLoginVisible(true);
@@ -73,6 +116,10 @@ const Header = ({ children }) => {
 
   const handleCartClick = () => {
     navigate("/cart");
+  };
+
+  const handleLogoClick = () => {
+    navigate("/");
   };
 
   const handleCitySelect = (city) => {
@@ -175,22 +222,20 @@ const Header = ({ children }) => {
               <img src={profile} alt="icon" onClick={handleProfileClick} />
               {isProfileMenuVisible && (
                 <div className="profileMenu">
-                  <div className="profile-list">
-                    <img src={account} alt="account" />
-                    Account
-                  </div>
-                  <div className="profile-list">
-                    <img src={addresses} alt="account" />
+                  <div className="profile-list">Account</div>
+                  <div
+                    className="profile-list"
+                    onClick={() => navigate("/addresses")}
+                  >
                     My Addresses
                   </div>
-                  <div className="profile-list">
-                    <img src={bookings} alt="account" />
+                  <div
+                    className="profile-list"
+                    onClick={() => navigate("/bookings")}
+                  >
                     My Bookings
                   </div>
-                  <div className="profile-list">
-                    <img src={logout} alt="account" />
-                    Log Out
-                  </div>
+                  <div className="profile-list">Log Out</div>
                 </div>
               )}
             </div>
@@ -198,7 +243,7 @@ const Header = ({ children }) => {
         </div>
         <div className="s-h">
           <div className="s-h-logo">
-            <img src={logo} alt="logo" />
+            <img src={logo} alt="logo" onClick={handleLogoClick} />
           </div>
           <div className="s-h-s">
             <div className="location">
@@ -221,7 +266,10 @@ const Header = ({ children }) => {
               )}
             </div>
             <div className="search-header">
-              <input placeholder="search for a service ex: Room cleaning, kitchen cleaning" />
+              <input
+                placeholder={`search for a service ex:${placeholder}`}
+                readOnly
+              />
             </div>
             <button className="books-button" onClick={handleBookServiceClick}>
               Book a Service
