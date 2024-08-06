@@ -35,32 +35,6 @@
     margin-right: 5px;
 }
 
-.dropdown-filter {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.dropdown-filter label {
-    color: #093ecf;
-    font-weight: 500;
-}
-
-.dropdown-filter select {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    font-size: 14px;
-    color: #333;
-}
-
-.dropdown-filter select:focus {
-    border-color: #0988cf;
-    outline: none;
-}
-
 .add-new-address {
     cursor: pointer;
     color: #093ecf;
@@ -89,7 +63,7 @@
 
 .address-form {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 10px;
 }
 
@@ -117,38 +91,6 @@
     outline: none;
 }
 
-.schedule-visit-btn {
-    background-color: #0988cf;
-    color: #fff;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: bold;
-    text-transform: uppercase;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-}
-
-.schedule-visit-btn:hover {
-    background-color: #086fa1;
-}
-
-.price-info {
-    margin-top: 20px;
-    font-size: 16px;
-}
-
-.price-info .item-count {
-    display: block;
-    margin-bottom: 10px;
-}
-
-.price-info .total-price {
-    font-size: 24px;
-    font-weight: bold;
-}
-
 .save-address-btn {
     cursor: pointer;
     background-color: #039f54;
@@ -156,7 +98,6 @@
     font-weight: 500;
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 2rem;
@@ -167,32 +108,26 @@
     margin-top: 0.1rem;
 }
 
-.saved-address {
-    background-color: #ffffff;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
+.cancel-address-btn {
+    cursor: pointer;
+    background-color: #d9534f;
+    color: #ffffff;
+    font-weight: 500;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 2rem;
+}
+
+.cancel-address-btn span {
+    margin-left: 0.5rem;
+    margin-top: 0.1rem;
+}
+
+.button-group {
+    display: flex;
     gap: 10px;
-}
-
-.saved-address p {
-    font-size: 14px;
-    line-height: 1.5;
-    color: #333;
-    margin: 0;
-}
-
-.saved-address .light-grey {
-    color: #888;
-    font-size: 12px;
-}
-
-.saved-address input[type="radio"] {
-    margin-top: 5px;
 }
 
 .input-error {

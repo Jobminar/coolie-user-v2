@@ -1,78 +1,34 @@
-.location-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 90;
-}
-
-.modal-content {
-    position: relative;
-    width: 80%;
-    height: 80%;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
+.location-container {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.close-button {
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.location-info p {
-    margin: 0;
-    font-size: 14px;
-}
-
-.body {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    flex-grow: 1;
+.map-container {
+    width: 100%;
+    height: 400px;
+    /* Ensure the map takes sufficient height */
+    margin-bottom: 20px;
+    /* Add some space below the map */
 }
 
 .instructions {
     padding: 20px;
     background: #f8f9fa;
-    border-right: 1px solid #dee2e6;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 
-.instructions p {
-    margin: 0 0 10px;
+.location-info p {
+    margin: 0 0 10px 0;
+    font-size: 14px;
 }
 
-.map-container {
-    height: 100%;
-    width: 100%;
-    /* Ensure the map takes full width */
-}
-
-.location-buttons {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    padding: 20px 0;
+.location-description {
+    margin: 20px 0;
 }
 
 .use-location-button {
@@ -84,7 +40,7 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .use-location-button:hover {
@@ -105,19 +61,4 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #007bff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
 }

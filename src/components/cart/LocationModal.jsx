@@ -1,42 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
-import "./LocationModal.css"; // Ensure to create appropriate styles
-import { useAuth } from "../../context/AuthContext"; // Import the AuthContext
-import markerImage from "../../assets/images/user-marker.gif"; // Import the marker image
-import {
-  FaMapMarkerAlt,
-  FaRegCheckCircle,
-  FaTimesCircle,
-} from "react-icons/fa"; // Import icons
-import { confirmAlert } from "react-confirm-alert";
-import "react-confirm-alert/src/react-confirm-alert.css"; // Import react-confirm-alert CSS
-import { TailSpin } from "react-loader-spinner"; // Import TailSpin from react-loader-spinner
+import "./LocationModal.css";
+import { useAuth } from "../../context/AuthContext";
+import markerImage from "../../assets/images/user-marker.gif";
+import { FaMapMarkerAlt, FaRegCheckCircle } from "react-icons/fa";
+import { TailSpin } from "react-loader-spinner";
 
-// Set your Mapbox access token from environment variables using Vite's method
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-const LocationModal = ({
-  onClose,
-  onLocationSelect,
-  lat,
-  lng,
-  initializeMap,
-}) => {
-  const { userLocation } = useAuth(); // Get userLocation from context
-  const mapContainerRef = useRef(null); // Reference to the map container
+const LocationModal = ({ onLocationSelect, onClose }) => {
+  const { userLocation } = useAuth();
+  const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
-  const [popup, setPopup] = useState(null); // State to manage the popup
+  const [popup, setPopup] = useState(null);
   const currentLngRef = useRef(
-    parseFloat(sessionStorage.getItem("markedLng")) || lng,
+    parseFloat(sessionStorage.getItem("markedLng")) || 0,
   );
   const currentLatRef = useRef(
-    parseFloat(sessionStorage.getItem("markedLat")) || lat,
+    parseFloat(sessionStorage.getItem("markedLat")) || 0,
   );
-  const [zoom, setZoom] = useState(12); // Adjusted zoom level for better initial focus
+  const [zoom, setZoom] = useState(12);
   const [address, setAddress] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state to manage API calls
-  const [mapLoading, setMapLoading] = useState(true); // State to check if map has loaded
+  const [loading, setLoading] = useState(false);
+  const [mapLoading, setMapLoading] = useState(true);
   const [tempLocation, setTempLocation] = useState({
     latitude: currentLatRef.current,
     longitude: currentLngRef.current,
@@ -63,81 +50,51 @@ const LocationModal = ({
     setAddress(fetchedAddress);
   };
 
-  const handleUseCurrentLocation = async () => {
-    confirmAlert({
-      title: "Confirm Location",
-      message: "Do you want to proceed with this location?",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: async () => {
-            const { latitude, longitude } = userLocation;
-            setLoading(true);
-            setTempLocation({ latitude, longitude });
-            sessionStorage.removeItem("markedLat");
-            sessionStorage.removeItem("markedLng");
-            currentLatRef.current = latitude;
-            currentLngRef.current = longitude;
-            await reloadMap(latitude, longitude);
-            await updateLocation(latitude, longitude);
-            onLocationSelect({
-              address,
-              city: "Current City",
-              pincode: "00000",
-              state: "Current State",
-              latitude,
-              longitude,
-            });
-            setLoading(false);
-          },
-        },
-        {
-          label: "No",
-        },
-      ],
+  const handleUseMarkedLocation = async () => {
+    const { latitude, longitude } = tempLocation;
+    if (popup) {
+      popup.remove();
+    }
+    setLoading(true);
+    const fetchedAddress = await fetchAddress(latitude, longitude);
+    const newPopup = new mapboxgl.Popup({ closeOnClick: true })
+      .setLngLat([longitude, latitude])
+      .setHTML(`<p><strong>Address:</strong> ${fetchedAddress}</p>`)
+      .addTo(map);
+    setPopup(newPopup);
+    sessionStorage.setItem("markedLat", latitude);
+    sessionStorage.setItem("markedLng", longitude);
+    currentLngRef.current = longitude;
+    currentLatRef.current = latitude;
+    onLocationSelect({
+      address: fetchedAddress,
+      city: "Marked City",
+      pincode: "00000",
+      state: "Marked State",
+      latitude,
+      longitude,
     });
+    setAddress(fetchedAddress);
+    setLoading(false);
   };
 
-  const handleUseMarkedLocation = async () => {
-    confirmAlert({
-      title: "Confirm Location",
-      message: "Do you want to proceed with this location?",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: async () => {
-            const { latitude, longitude } = tempLocation;
-            if (popup) {
-              popup.remove(); // Remove any existing popup
-            }
-            setLoading(true);
-            const fetchedAddress = await fetchAddress(latitude, longitude);
-            const newPopup = new mapboxgl.Popup({ closeOnClick: true })
-              .setLngLat([longitude, latitude])
-              .setHTML(`<p><strong>Address:</strong> ${fetchedAddress}</p>`)
-              .addTo(map);
-            setPopup(newPopup); // Set the new popup to state
-            sessionStorage.setItem("markedLat", latitude);
-            sessionStorage.setItem("markedLng", longitude);
-            currentLngRef.current = longitude;
-            currentLatRef.current = latitude;
-            onLocationSelect({
-              address: fetchedAddress,
-              city: "Marked City",
-              pincode: "00000",
-              state: "Marked State",
-              latitude,
-              longitude,
-            });
-            setAddress(fetchedAddress);
-            setLoading(false);
-          },
-        },
-        {
-          label: "No",
-        },
-      ],
-    });
+  const handleUseCurrentLocation = async () => {
+    if (userLocation) {
+      const { latitude, longitude } = userLocation;
+      setTempLocation({ latitude, longitude });
+      currentLatRef.current = latitude;
+      currentLngRef.current = longitude;
+      reloadMap(latitude, longitude);
+      const fetchedAddress = await fetchAddress(latitude, longitude);
+      onLocationSelect({
+        address: fetchedAddress,
+        city: "Current City",
+        pincode: "00000",
+        state: "Current State",
+        latitude,
+        longitude,
+      });
+    }
   };
 
   const reloadMap = async (latitude, longitude) => {
@@ -150,14 +107,14 @@ const LocationModal = ({
     } else {
       const newMap = new mapboxgl.Map({
         container: mapContainerRef.current,
-        style: "mapbox://styles/mapbox/streets-v11", // Mapbox street style map
+        style: "mapbox://styles/mapbox/streets-v11",
         center: [longitude, latitude],
         zoom: zoom,
       });
 
       newMap.on("load", async () => {
         setMap(newMap);
-        setMapLoading(false); // Map has finished loading
+        setMapLoading(false);
 
         const newMarker = new mapboxgl.Marker({
           draggable: true,
@@ -195,17 +152,15 @@ const LocationModal = ({
   };
 
   useEffect(() => {
-    if (initializeMap) {
-      if (currentLatRef.current === 0 && currentLngRef.current === 0) {
-        if (userLocation) {
-          const { latitude, longitude } = userLocation;
-          reloadMap(latitude, longitude);
-        }
-      } else {
-        reloadMap(currentLatRef.current, currentLngRef.current);
+    if (currentLatRef.current === 0 && currentLngRef.current === 0) {
+      if (userLocation) {
+        const { latitude, longitude } = userLocation;
+        reloadMap(latitude, longitude);
       }
+    } else {
+      reloadMap(currentLatRef.current, currentLngRef.current);
     }
-  }, [initializeMap, userLocation]);
+  }, [userLocation]);
 
   useEffect(() => {
     if (userLocation) {
@@ -214,76 +169,53 @@ const LocationModal = ({
   }, [userLocation]);
 
   return (
-    <div className="location-modal">
-      <div className="modal-content">
-        {loading && (
-          <div className="loading-overlay">
-            <TailSpin
-              height="80"
-              width="80"
-              color="#0988cf"
-              ariaLabel="tail-spin-loading"
-              radius="1"
-              visible={true}
-            />
-          </div>
-        )}
-        <div className="header">
-          <div className="location-info">
-            <p>
-              <strong>Address:</strong> {address}
-            </p>
-            <p>
-              <strong>Latitude:</strong> {currentLatRef.current}
-            </p>
-            <p>
-              <strong>Longitude:</strong> {currentLngRef.current}
-            </p>
-          </div>
-          <button onClick={() => onClose()} className="close-button">
-            <FaTimesCircle />
-          </button>
+    <div className="location-container">
+      {loading && (
+        <div className="loading-overlay">
+          <TailSpin
+            height="80"
+            width="80"
+            color="#0988cf"
+            ariaLabel="tail-spin-loading"
+            radius="1"
+            visible={true}
+          />
         </div>
-        <div className="body">
-          <div className="instructions">
-            <p>
-              <strong>Welcome!</strong> You can use this map to set your
-              location. Drag the marker to your desired location or click on the
-              map to place the marker. You can also use your current location or
-              the marked location.
-            </p>
-            <p>
-              <strong>Use Current Location:</strong> This will reset the marker
-              to your current location as detected by your device.
-            </p>
-            <p>
-              <strong>Use Marked Location:</strong> This will use the location
-              set by the marker on the map.
-            </p>
-            <div className="location-buttons">
-              <button
-                onClick={handleUseCurrentLocation}
-                className="use-location-button"
-                disabled={loading}
-              >
-                <FaMapMarkerAlt /> Use Current Location
-              </button>
-              <button
-                onClick={handleUseMarkedLocation}
-                className="use-location-button"
-                disabled={loading}
-              >
-                <FaRegCheckCircle /> Use Marked Location
-              </button>
-            </div>
-          </div>
-
-          <div id="map" className="map-container" ref={mapContainerRef}>
-            {mapLoading && (
-              <div className="loading-message">Loading map...</div>
-            )}
-          </div>
+      )}
+      <div id="map" className="map-container" ref={mapContainerRef}>
+        {mapLoading && <div className="loading-message">Loading map...</div>}
+      </div>
+      <div className="instructions">
+        <div className="location-info">
+          <p>
+            <strong>Address:</strong> {address}
+          </p>
+          <p>
+            <strong>Latitude:</strong> {currentLatRef.current}
+          </p>
+          <p>
+            <strong>Longitude:</strong> {currentLngRef.current}
+          </p>
         </div>
+        <p className="location-description">
+          <strong>Welcome!</strong> You can use this map to set your location.
+          Drag the marker to your desired location or click on the map to place
+          the marker. Use the marked location to proceed.
+        </p>
+        <button
+          onClick={handleUseMarkedLocation}
+          className="use-location-button"
+          disabled={loading}
+        >
+          <FaRegCheckCircle /> Use Marked Location
+        </button>
+        <button
+          onClick={handleUseCurrentLocation}
+          className="use-location-button"
+          disabled={loading}
+        >
+          <FaMapMarkerAlt /> Use Current Location
+        </button>
       </div>
     </div>
   );
