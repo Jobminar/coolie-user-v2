@@ -125,22 +125,19 @@ const CartSummary = ({ fullWidth }) => {
             >
               <div className="icon-container">
                 <img
-                  src={activeTabs.includes("cart") ? cartIconActive : cartIcon}
+                  src={cartIconActive}
                   alt="Cart"
+                  className={
+                    !isCompleted("cart") && !activeTabs.includes("cart")
+                      ? "unprocessed"
+                      : ""
+                  }
                 />
                 {totalItems > 0 && <span className="badge">{totalItems}</span>}
               </div>
               <span>Cart</span>
             </div>
-            <img
-              src={
-                activeTabs.includes("cart") && activeTabs.includes("address")
-                  ? arrowIconActive
-                  : arrowIcon
-              }
-              alt="Arrow"
-              className="arrow-icon"
-            />
+            <img src={arrowIconActive} alt="Arrow" className="arrow-icon" />
             <div
               className={`step ${
                 activeTabs.includes("address") ? "active" : ""
@@ -150,26 +147,18 @@ const CartSummary = ({ fullWidth }) => {
             >
               <div className="icon-container">
                 <img
-                  src={
-                    activeTabs.includes("address")
-                      ? locationMarkerActive
-                      : locationMarker
-                  }
+                  src={locationMarkerActive}
                   alt="Address"
+                  className={
+                    !isCompleted("address") && !activeTabs.includes("address")
+                      ? "unprocessed"
+                      : ""
+                  }
                 />
               </div>
               <span>Address</span>
             </div>
-            <img
-              src={
-                activeTabs.includes("address") &&
-                activeTabs.includes("schedule")
-                  ? arrowIconActive
-                  : arrowIcon
-              }
-              alt="Arrow"
-              className="arrow-icon"
-            />
+            <img src={arrowIconActive} alt="Arrow" className="arrow-icon" />
             <div
               className={`step ${
                 activeTabs.includes("schedule") ? "active" : ""
@@ -179,26 +168,18 @@ const CartSummary = ({ fullWidth }) => {
             >
               <div className="icon-container">
                 <img
-                  src={
-                    activeTabs.includes("schedule")
-                      ? calendarIconActive
-                      : calendarIcon
-                  }
+                  src={calendarIconActive}
                   alt="Schedule"
+                  className={
+                    !isCompleted("schedule") && !activeTabs.includes("schedule")
+                      ? "unprocessed"
+                      : ""
+                  }
                 />
               </div>
               <span>Schedule</span>
             </div>
-            <img
-              src={
-                activeTabs.includes("schedule") &&
-                activeTabs.includes("checkout")
-                  ? arrowIconActive
-                  : arrowIcon
-              }
-              alt="Arrow"
-              className="arrow-icon"
-            />
+            <img src={arrowIconActive} alt="Arrow" className="arrow-icon" />
             <div
               className={`step ${
                 activeTabs.includes("checkout") ? "active" : ""
@@ -208,12 +189,13 @@ const CartSummary = ({ fullWidth }) => {
             >
               <div className="icon-container">
                 <img
-                  src={
-                    activeTabs.includes("checkout")
-                      ? checkoutIconActive
-                      : checkoutIcon
-                  }
+                  src={checkoutIconActive}
                   alt="Checkout"
+                  className={
+                    !isCompleted("checkout") && !activeTabs.includes("checkout")
+                      ? "unprocessed"
+                      : ""
+                  }
                 />
               </div>
               <span>Checkout</span>
