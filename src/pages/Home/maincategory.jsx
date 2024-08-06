@@ -30,7 +30,6 @@ const Maincategory = () => {
 
   const handleCategory = (id) => {
     setSelectedCategoryId(id);
-    console.log('this function was called',id)
     navigate("/services");
   };
 
