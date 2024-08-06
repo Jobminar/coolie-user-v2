@@ -265,9 +265,9 @@
 .main-h {
     position: relative;
     /* Other styles */
-  }
-  
-  .profileMenu {
+}
+
+.profileMenu {
     position: absolute;
     top: 2.5rem; /* Adjust as needed */
     right: 0.5rem;
@@ -286,8 +286,9 @@
     min-width: 8rem;
     min-height:10rem ;
     border-radius: 10px;
-  }
-  .profile-list{
+}
+
+.profile-list {
     font-family: Nunito Sans;
     font-size: 15px;
     font-weight: 600;
@@ -300,4 +301,4 @@
   }
   .profile-list:hover{
     cursor: pointer;
-  }
+}

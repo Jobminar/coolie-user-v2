@@ -1,7 +1,8 @@
-import React, { useState, useContext, useEffect } from "react";
+// Header.jsx
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { CartContext, CartProvider } from "../../context/CartContext"; // Import CartContext
+import { CartContext, CartProvider } from "../../context/CartContext";
 import "./header.css";
 import playstore from "../../assets/images/play-store.svg";
 import apple from "../../assets/images/apple.svg";
@@ -19,6 +20,9 @@ import account from '../../assets/images/account.png'
 import addresses from '../../assets/images/myaddresses.png'
 import bookings from '../../assets/images/mybookings.png'
 import logout from '../../assets/images/logout.png';
+import CitySearchComponent from "./CitySearchComponent";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const useTypewriter = (texts, speed = 100, pause = 2000) => {
   const [index, setIndex] = useState(0);
@@ -49,14 +53,34 @@ const useTypewriter = (texts, speed = 100, pause = 2000) => {
     : texts[index].substring(0, subIndex);
 };
 
+
 const Header = ({ children }) => {
   const navigate = useNavigate();
+  const { isAuthenticated, userCity, fetchCityName, updateUserLocation } =
+    useAuth();
     const { logout } = useAuth(); 
-  const { isAuthenticated } = useAuth();
-  const { totalItems } = useContext(CartContext); // Access totalItems from CartContext
+  const { totalItems } = useContext(CartContext);
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
   const [isProfileMenuVisible, setProfileMenuVisible] = useState(false);
+  const selectedCityRef = useRef(
+    sessionStorage.getItem("selectedCity") || userCity || "",
+  );
+  const [locationQuery, setLocationQuery] = useState(selectedCityRef.current);
+  const [selectedCity, setSelectedCity] = useState(selectedCityRef.current);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+  useEffect(() => {
+    if (userCity) {
+      selectedCityRef.current = userCity;
+      setLocationQuery(userCity);
+      setSelectedCity(userCity);
+    }
+  }, [userCity]);
+
+  useEffect(() => {
+    sessionStorage.setItem("selectedCity", selectedCityRef.current);
+  }, [selectedCity]);
 
   const placeholders = [
     " Room cleaning, kitchen cleaning",
@@ -83,11 +107,88 @@ const Header = ({ children }) => {
   };
 
   const handleBookServiceClick = () => {
-    navigate("/services"); // Navigate to /services when button is clicked
+    navigate("/services");
   };
 
   const handleCartClick = () => {
-    navigate("/cart"); // Navigate to /cart when cart icon is clicked
+    navigate("/cart");
+  };
+
+  const handleCitySelect = (city) => {
+    confirmAlert({
+      title: "Confirm Location Change",
+      message: "Are you sure you want to change your location?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            selectedCityRef.current = city.name;
+            setSelectedCity(city.name);
+            setLocationQuery(city.name);
+            setIsDropdownVisible(false);
+            updateUserLocation(city.coordinates[1], city.coordinates[0]);
+            sessionStorage.setItem("selectedCity", city.name);
+          },
+        },
+        {
+          label: "No",
+          onClick: () => setIsDropdownVisible(false),
+        },
+      ],
+      closeOnClickOutside: false,
+    });
+  };
+
+  const handleInputChange = (e) => {
+    setLocationQuery(e.target.value);
+    setIsDropdownVisible(true);
+  };
+
+  const handleLocationIconClick = () => {
+    confirmAlert({
+      title: "Use Current Location",
+      message: "Do you want to use your current location?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const { latitude, longitude } = position.coords;
+                  fetchCityName(latitude, longitude).then((cityName) => {
+                    selectedCityRef.current = cityName;
+                    setSelectedCity(cityName);
+                    setLocationQuery(cityName);
+                    updateUserLocation(latitude, longitude);
+                    sessionStorage.setItem("selectedCity", cityName);
+                  });
+                },
+                (error) => {
+                  console.error("Error getting location:", error);
+                  if (error.code === 1) {
+                    alert(
+                      "Location access is denied. Please allow location access in your browser settings.",
+                    );
+                  } else {
+                    alert(
+                      "An error occurred while fetching your location. Please try again.",
+                    );
+                  }
+                },
+              );
+            } else {
+              alert("Geolocation is not supported by this browser.");
+            }
+          },
+        },
+        {
+          label: "No",
+          onClick: () => {},
+        },
+      ],
+      closeOnClickOutside: false,
+    });
   };
 
   return (
@@ -128,8 +229,23 @@ const Header = ({ children }) => {
           </div>
           <div className="s-h-s">
             <div className="location">
-              <img src={location} alt="location" />
-              <input placeholder="Hyderabad" />
+              <img
+                src={location}
+                alt="location"
+                onClick={handleLocationIconClick}
+              />
+              <input
+                placeholder="City"
+                value={locationQuery}
+                onChange={handleInputChange}
+              />
+              {locationQuery && isDropdownVisible && (
+                <CitySearchComponent
+                  query={locationQuery}
+                  onSelect={handleCitySelect}
+                  onClose={() => setIsDropdownVisible(false)}
+                />
+              )}
             </div>
             <div className="search-header">
               <input

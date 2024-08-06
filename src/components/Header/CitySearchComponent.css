@@ -1,0 +1,60 @@
+.city-search-component {
+    position: relative;
+    top: 10%;
+    left: -60%;
+    padding: 1rem
+}
+
+.city-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 10rem;
+    background-color: white;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.city-dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    font-size: small;
+    transition: background-color 0.3s;
+}
+
+.city-dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+.city-dropdown-item:active {
+    background-color: #e0e0e0;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    .city-dropdown {
+        width: 8rem;
+        left: 10%;
+    }
+
+    .city-dropdown-item {
+        padding: 15px;
+        font-size: medium;
+    }
+}
+
+@media (max-width: 480px) {
+    .city-dropdown {
+        width: 10rem;
+        left: 0;
+    }
+
+    .city-dropdown-item {
+        padding: 20px;
+        font-size: large;
+    }
+}
