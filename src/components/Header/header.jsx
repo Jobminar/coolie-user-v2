@@ -14,7 +14,6 @@ import LoginComponent from "../LoginComponent";
 import ChatbotComponent from "../Chat/ChatbotComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-import Userprofile from "../../pages/USER-PROFILE/user-profile";
 import account from "../../assets/images/account.png";
 import addresses from "../../assets/images/myaddresses.png";
 import bookings from "../../assets/images/mybookings.png";
@@ -226,9 +225,7 @@ const Header = ({ children }) => {
                   <div className="profile-list">Account</div>
                   <div
                     className="profile-list"
-                    onClick={() => {
-                      navigate("/addresses");
-                    }}
+                    onClick={() => navigate("/addresses")}
                   >
                     My Addresses
                   </div>

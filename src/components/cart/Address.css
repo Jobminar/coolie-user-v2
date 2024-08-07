@@ -1,8 +1,7 @@
 .address-container {
     background-color: #f9f9f9;
     padding: 20px;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-radius: 8px;
     border: 1px solid #e6f7d4;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     width: 88%;
@@ -10,40 +9,37 @@
     text-align: left;
 }
 
-.radio-group {
+.address-radio-group {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 1px;
     justify-content: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 1px;
+    flex-wrap: nowrap;
+
+    /* Ensure items don't wrap */
 }
 
-.radio-group p {
+.address-radio-group p {
     color: #093ecf;
     margin: 0;
     padding-right: 10px;
+    font-size: 14px;
+    /* Smaller font size */
 }
 
-.radio-group label {
+.address-radio-group label {
     color: #000000;
     font-weight: 500;
     display: flex;
+    justify-content: center;
     align-items: center;
+    font-size: 12px;
+    flex-wrap: nowrap;
+    /* Smaller font size */
 }
 
-.radio-group input {
-    margin-right: 5px;
-}
-
-.location-option {
-    color: #093ecf;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.location-option svg {
+.address-radio-group input {
     margin-right: 5px;
 }
 
@@ -53,7 +49,7 @@
     font-weight: 500;
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .add-new-address svg {
@@ -73,10 +69,48 @@
     margin-left: 5px;
 }
 
+.saved-addresses-container {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background: #fff;
+}
+
+.saved-address {
+    display: flex;
+    align-items: flex-start;
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    /* Reduced font size */
+}
+
+.saved-address p {
+    margin: 0;
+    margin-left: 10px;
+}
+
+.filter-container {
+    margin-bottom: 10px;
+}
+
+.filter-container select {
+    margin-left: 10px;
+    padding: 2.5px;
+    border: 1px solid rgb(174, 174, 174);
+    border-radius: 5px;
+}
+
 .address-form {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 10px;
+    margin-bottom: 1rem;
 }
 
 .form-row {
@@ -86,7 +120,7 @@
 }
 
 .address-form input {
-    flex: 1 1 48%;
+    flex: 1 1 10%;
     width: 100%;
     padding: 12px;
     border-radius: 5px;
@@ -103,36 +137,10 @@
     outline: none;
 }
 
-.schedule-visit-btn {
-    background-color: #0988cf;
-    color: #fff;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: bold;
-    text-transform: uppercase;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-}
-
-.schedule-visit-btn:hover {
-    background-color: #086fa1;
-}
-
-.price-info {
-    margin-top: 20px;
-    font-size: 16px;
-}
-
-.price-info .item-count {
-    display: block;
-    margin-bottom: 10px;
-}
-
-.price-info .total-price {
-    font-size: 24px;
-    font-weight: bold;
+.address-button-group {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
 }
 
 .save-address-btn {
@@ -142,7 +150,6 @@
     font-weight: 500;
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 2rem;
@@ -153,32 +160,21 @@
     margin-top: 0.1rem;
 }
 
-.saved-address {
-    background-color: #ffffff;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
+.cancel-address-btn {
+    cursor: pointer;
+    background-color: #e74c3c;
+    color: #ffffff;
+    font-weight: 500;
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 2rem;
 }
 
-.saved-address p {
-    font-size: 14px;
-    line-height: 1.5;
-    color: #333;
-    margin: 0;
-}
-
-.saved-address .light-grey {
-    color: #888;
-    font-size: 12px;
-}
-
-.saved-address input[type="radio"] {
-    margin-top: 5px;
+.cancel-address-btn span {
+    margin-left: 0.5rem;
+    margin-top: 0.1rem;
 }
 
 .input-error {
@@ -199,7 +195,7 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 0;
-    padding: 0 0.1rem
+    padding: 0 0.1rem;
 }
 
 .address-totals-info {
@@ -232,9 +228,22 @@
     border-radius: 50px;
     cursor: pointer;
     width: 100%;
-    margin-top: 0.1rem
+    margin-top: 0.1rem;
 }
 
 .go-to-address-btn:hover {
     background-color: #086fa1;
+}
+
+.saved-addresses-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.saved-addresses-container::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 10px;
+}
+
+.saved-addresses-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
