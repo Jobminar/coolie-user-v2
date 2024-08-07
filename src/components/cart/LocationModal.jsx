@@ -190,32 +190,28 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
           <p>
             <strong>Address:</strong> {address}
           </p>
-          <p>
-            <strong>Latitude:</strong> {currentLatRef.current}
-          </p>
-          <p>
-            <strong>Longitude:</strong> {currentLngRef.current}
-          </p>
         </div>
         <p className="location-description">
           <strong>Welcome!</strong> You can use this map to set your location.
           Drag the marker to your desired location or click on the map to place
           the marker. Use the marked location to proceed.
         </p>
-        <button
-          onClick={handleUseMarkedLocation}
-          className="use-location-button"
-          disabled={loading}
-        >
-          <FaRegCheckCircle /> Use Marked Location
-        </button>
-        <button
-          onClick={handleUseCurrentLocation}
-          className="use-location-button"
-          disabled={loading}
-        >
-          <FaMapMarkerAlt /> Use Current Location
-        </button>
+        <div className="location-buttons">
+          <button
+            onClick={handleUseMarkedLocation}
+            className="use-location-button"
+            disabled={loading}
+          >
+            <FaRegCheckCircle /> Use Marked Location
+          </button>
+          <button
+            onClick={handleUseCurrentLocation}
+            className="use-location-button"
+            disabled={loading}
+          >
+            <FaMapMarkerAlt /> Use Current Location
+          </button>
+        </div>
       </div>
     </div>
   );

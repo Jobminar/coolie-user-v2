@@ -40,6 +40,7 @@ const Address = ({ onNext }) => {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [filterBookingType, setFilterBookingType] = useState("");
 
   useEffect(() => {
     const fetchSavedAddresses = async () => {
@@ -64,6 +65,20 @@ const Address = ({ onNext }) => {
     fetchSavedAddresses();
   }, [userId, updateSelectedAddressId]);
 
+  useEffect(() => {
+    const fetchSavedAddressesImmediately = async () => {
+      if (userId) {
+        try {
+          const addresses = await getSavedAddresses(userId);
+          setSavedAddresses(addresses);
+        } catch (error) {
+          console.error("Error fetching saved addresses immediately:", error);
+        }
+      }
+    };
+    fetchSavedAddressesImmediately();
+  }, [userId]);
+
   const handleShowSavedAddresses = () => {
     setShowSavedAddresses(!showSavedAddresses);
   };
@@ -85,8 +100,11 @@ const Address = ({ onNext }) => {
       };
       delete requestBody.name;
       console.log("Sending address data to API:", requestBody);
-      const savedAddress = await saveAddress(requestBody);
-      setSavedAddresses((prevAddresses) => [...prevAddresses, savedAddress]);
+      await saveAddress(requestBody);
+      const addresses = await getSavedAddresses(userId);
+      setSavedAddresses(addresses);
+      setShowForm(false);
+      setShowSavedAddresses(true);
     } catch (error) {
       console.error("Error in handleSaveAddress:", error);
     }
@@ -115,6 +133,7 @@ const Address = ({ onNext }) => {
     }));
     setShowLocationModal(false);
     setShowForm(true);
+    setShowSavedAddresses(false);
   };
 
   const parseAddress = (fullAddress) => {
@@ -129,53 +148,80 @@ const Address = ({ onNext }) => {
     };
   };
 
+  const filteredAddresses = filterBookingType
+    ? savedAddresses.filter(
+        (address) => address.bookingType === filterBookingType,
+      )
+    : savedAddresses;
+
   return (
     <div className="address-container">
       <ToastContainer />
-      <div
-        className="toggle-saved-addresses"
-        onClick={handleShowSavedAddresses}
-      >
-        <FontAwesomeIcon icon={faSave} /> <span>Show Saved Addresses</span>
+      <div className="filter-container">
+        <label htmlFor="filterBookingType">Filter by Booking Type: </label>
+        <select
+          id="filterBookingType"
+          value={filterBookingType}
+          onChange={(e) => setFilterBookingType(e.target.value)}
+        >
+          <option value="">All</option>
+          <option value="self">Self</option>
+          <option value="others">Others</option>
+        </select>
       </div>
-      {showSavedAddresses &&
-        (savedAddresses.length > 0 ? (
-          savedAddresses.map((address, index) => (
-            <div key={index} className="saved-address">
-              <input
-                type="radio"
-                name="selectedAddress"
-                checked={selectedAddress?._id === address._id}
-                onChange={() => handleRadioChange(address)}
-              />
-              <p>
-                <strong>Name:</strong> {address.username} <br />
-                <strong>Mobile:</strong> {address.mobileNumber} <br />
-                <strong>Booking Type:</strong> {address.bookingType} <br />
-                <strong>Address:</strong> {address.address}, {address.city},{" "}
-                {address.pincode}, {address.landmark}, {address.state}
-              </p>
-            </div>
-          ))
-        ) : (
-          <p>No address available</p>
-        ))}
       <div
         className="add-new-address"
         onClick={() => {
           setShowLocationModal(true);
           setShowForm(false);
+          setShowSavedAddresses(false);
         }}
       >
         <FontAwesomeIcon icon={faEdit} />
         <span>Add New Address & Mobile Number</span>
       </div>
+      {showSavedAddresses && (
+        <>
+          <div
+            className="toggle-saved-addresses"
+            onClick={handleShowSavedAddresses}
+          >
+            <FontAwesomeIcon icon={faSave} /> <span>Show Saved Addresses</span>
+          </div>
+          <div className="saved-addresses-container">
+            {filteredAddresses.length > 0 ? (
+              filteredAddresses.map((address, index) => (
+                <div key={index} className="saved-address">
+                  <input
+                    type="radio"
+                    name="selectedAddress"
+                    checked={selectedAddress?._id === address._id}
+                    onChange={() => handleRadioChange(address)}
+                  />
+                  <p>
+                    <strong>Name:</strong> {address.username} <br />
+                    <strong>Mobile:</strong> {address.mobileNumber} <br />
+                    <strong>Booking Type:</strong> {address.bookingType} <br />
+                    <strong>Address:</strong> {address.address}, {address.city},{" "}
+                    {address.pincode}, {address.landmark}, {address.state}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p>No address available</p>
+            )}
+          </div>
+        </>
+      )}
       {showForm && (
         <AddressForm
           addressData={addressData}
           setAddressData={setAddressData}
           handleSaveAddress={handleSaveAddress}
-          onCancel={() => setShowForm(false)}
+          onCancel={() => {
+            setShowForm(false);
+            setShowSavedAddresses(true);
+          }}
         />
       )}
       {showLocationModal && (
