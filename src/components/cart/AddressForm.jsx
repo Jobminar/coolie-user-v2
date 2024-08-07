@@ -47,7 +47,7 @@ const AddressForm = ({
 
   return (
     <div className="address-form">
-      <div className="radio-group">
+      <div className="address-radio-group">
         <p>Contact:</p>
         <label>
           <input
@@ -57,7 +57,7 @@ const AddressForm = ({
             checked={addressData.bookingType === "self"}
             onChange={handleChange}
           />
-          My Self
+          <h4>My Self</h4>
         </label>
         <label>
           <input
@@ -67,7 +67,7 @@ const AddressForm = ({
             checked={addressData.bookingType === "others"}
             onChange={handleChange}
           />
-          Booking for Others
+          <h4>Booking for Others</h4>
         </label>
       </div>
       <div className="form-row">
@@ -151,7 +151,7 @@ const AddressForm = ({
         />
         {errors.state && <span className="error-message">{errors.state}</span>}
       </div>
-      <div className="button-group">
+      <div className="address-button-group">
         <button className="save-address-btn" onClick={handleSave}>
           <FontAwesomeIcon icon={faSave} /> <span>SAVE ADDRESS</span>
         </button>

@@ -9,28 +9,37 @@
     text-align: left;
 }
 
-.radio-group {
+.address-radio-group {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 1px;
     justify-content: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 1px;
+    flex-wrap: nowrap;
+
+    /* Ensure items don't wrap */
 }
 
-.radio-group p {
+.address-radio-group p {
     color: #093ecf;
     margin: 0;
     padding-right: 10px;
+    font-size: 14px;
+    /* Smaller font size */
 }
 
-.radio-group label {
+.address-radio-group label {
     color: #000000;
     font-weight: 500;
     display: flex;
+    justify-content: center;
     align-items: center;
+    font-size: 12px;
+    flex-wrap: nowrap;
+    /* Smaller font size */
 }
 
-.radio-group input {
+.address-radio-group input {
     margin-right: 5px;
 }
 
@@ -40,7 +49,7 @@
     font-weight: 500;
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .add-new-address svg {
@@ -92,13 +101,16 @@
 
 .filter-container select {
     margin-left: 10px;
-    padding: 5px;
+    padding: 2.5px;
+    border: 1px solid rgb(174, 174, 174);
+    border-radius: 5px;
 }
 
 .address-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-bottom: 1rem;
 }
 
 .form-row {
@@ -108,7 +120,7 @@
 }
 
 .address-form input {
-    flex: 1 1 48%;
+    flex: 1 1 10%;
     width: 100%;
     padding: 12px;
     border-radius: 5px;
@@ -125,6 +137,12 @@
     outline: none;
 }
 
+.address-button-group {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
 .save-address-btn {
     cursor: pointer;
     background-color: #039f54;
@@ -132,13 +150,29 @@
     font-weight: 500;
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 2rem;
 }
 
 .save-address-btn span {
+    margin-left: 0.5rem;
+    margin-top: 0.1rem;
+}
+
+.cancel-address-btn {
+    cursor: pointer;
+    background-color: #e74c3c;
+    color: #ffffff;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 2rem;
+}
+
+.cancel-address-btn span {
     margin-left: 0.5rem;
     margin-top: 0.1rem;
 }

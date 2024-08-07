@@ -9,30 +9,26 @@ import { TailSpin } from "react-loader-spinner";
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const LocationModal = ({ onLocationSelect, onClose }) => {
-  const { userLocation } = useAuth();
+  const { userLocation, userCity } = useAuth();
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
   const [popup, setPopup] = useState(null);
-  const currentLngRef = useRef(
-    parseFloat(sessionStorage.getItem("markedLng")) || 0,
-  );
-  const currentLatRef = useRef(
-    parseFloat(sessionStorage.getItem("markedLat")) || 0,
-  );
   const [zoom, setZoom] = useState(12);
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [mapLoading, setMapLoading] = useState(true);
   const [tempLocation, setTempLocation] = useState({
-    latitude: currentLatRef.current,
-    longitude: currentLngRef.current,
+    latitude: parseFloat(sessionStorage.getItem("markedLat")) || 0,
+    longitude: parseFloat(sessionStorage.getItem("markedLng")) || 0,
   });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
 
   const fetchAddress = async (latitude, longitude) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${mapboxgl.accessToken}`,
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${mapboxgl.accessToken}&types=address,poi,neighborhood,place,locality`,
       );
       const data = await response.json();
       if (data.features.length > 0) {
@@ -42,6 +38,33 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
     } catch (error) {
       console.error("Failed to fetch address:", error);
       return "Error fetching address";
+    }
+  };
+
+  const fetchSuggestions = async (query) => {
+    if (!query) {
+      setSuggestions([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${mapboxgl.accessToken}&autocomplete=true&types=address,poi,neighborhood,place,locality`,
+      );
+      const data = await response.json();
+      if (data.features.length > 0) {
+        const cityFiltered = data.features.filter(
+          (feature) =>
+            feature.place_name.toUpperCase().includes(query.toUpperCase()) &&
+            feature.place_name.toUpperCase().includes(userCity.toUpperCase()),
+        );
+        setSuggestions(cityFiltered);
+      } else {
+        setSuggestions([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch suggestions:", error);
+      setSuggestions([]);
     }
   };
 
@@ -64,13 +87,9 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
     setPopup(newPopup);
     sessionStorage.setItem("markedLat", latitude);
     sessionStorage.setItem("markedLng", longitude);
-    currentLngRef.current = longitude;
-    currentLatRef.current = latitude;
     onLocationSelect({
       address: fetchedAddress,
-      city: "Marked City",
-      pincode: "00000",
-      state: "Marked State",
+      city: userCity,
       latitude,
       longitude,
     });
@@ -82,15 +101,11 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
     if (userLocation) {
       const { latitude, longitude } = userLocation;
       setTempLocation({ latitude, longitude });
-      currentLatRef.current = latitude;
-      currentLngRef.current = longitude;
       reloadMap(latitude, longitude);
       const fetchedAddress = await fetchAddress(latitude, longitude);
       onLocationSelect({
         address: fetchedAddress,
-        city: "Current City",
-        pincode: "00000",
-        state: "Current State",
+        city: userCity,
         latitude,
         longitude,
       });
@@ -148,25 +163,62 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
         newMarker.setLngLat([longitude, latitude]);
         await updateLocation(latitude, longitude);
       });
+
+      const geolocateControl = new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+        showUserLocation: true,
+      });
+
+      newMap.addControl(geolocateControl);
+
+      geolocateControl.on("geolocate", (e) => {
+        const { latitude, longitude } = e.coords;
+        setTempLocation({ latitude, longitude });
+        reloadMap(latitude, longitude);
+      });
     }
   };
 
-  useEffect(() => {
-    if (currentLatRef.current === 0 && currentLngRef.current === 0) {
-      if (userLocation) {
-        const { latitude, longitude } = userLocation;
-        reloadMap(latitude, longitude);
-      }
-    } else {
-      reloadMap(currentLatRef.current, currentLngRef.current);
-    }
-  }, [userLocation]);
+  const handleSuggestionClick = async (suggestion) => {
+    const [longitude, latitude] = suggestion.center;
+    setTempLocation({ latitude, longitude });
+    setSearchQuery(suggestion.place_name);
+    setSuggestions([]);
+    reloadMap(latitude, longitude);
+    const fetchedAddress = await fetchAddress(latitude, longitude);
+    onLocationSelect({
+      address: fetchedAddress,
+      city: userCity,
+      latitude,
+      longitude,
+    });
+  };
 
   useEffect(() => {
-    if (userLocation) {
-      updateLocation(userLocation.latitude, userLocation.longitude);
+    if (
+      userLocation &&
+      tempLocation.latitude === 0 &&
+      tempLocation.longitude === 0
+    ) {
+      const { latitude, longitude } = userLocation;
+      reloadMap(latitude, longitude);
+    } else if (tempLocation.latitude !== 0 && tempLocation.longitude !== 0) {
+      reloadMap(tempLocation.latitude, tempLocation.longitude);
     }
-  }, [userLocation]);
+  }, [userLocation, tempLocation.latitude, tempLocation.longitude]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchQuery.length >= 1) {
+        fetchSuggestions(searchQuery);
+      }
+    }, 50); // Reduced delay for faster updates
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
 
   return (
     <div className="location-container">
@@ -182,6 +234,26 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
           />
         </div>
       )}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search for a location"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        {suggestions.length > 0 && (
+          <ul className="suggestions-list">
+            {suggestions.map((suggestion) => (
+              <li
+                key={suggestion.id}
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion.place_name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       <div id="map" className="map-container" ref={mapContainerRef}>
         {mapLoading && <div className="loading-message">Loading map...</div>}
       </div>
