@@ -157,18 +157,20 @@ const Address = ({ onNext }) => {
   return (
     <div className="address-container">
       <ToastContainer />
-      <div className="filter-container">
-        <label htmlFor="filterBookingType">Filter by Booking Type: </label>
-        <select
-          id="filterBookingType"
-          value={filterBookingType}
-          onChange={(e) => setFilterBookingType(e.target.value)}
-        >
-          <option value="">All</option>
-          <option value="self">Self</option>
-          <option value="others">Others</option>
-        </select>
-      </div>
+      {showSavedAddresses && (
+        <div className="filter-container">
+          <label htmlFor="filterBookingType">Filter by Booking Type: </label>
+          <select
+            id="filterBookingType"
+            value={filterBookingType}
+            onChange={(e) => setFilterBookingType(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="self">Self</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+      )}
       <div
         className="add-new-address"
         onClick={() => {
