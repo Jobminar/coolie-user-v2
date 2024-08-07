@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl";
 import "./LocationModal.css";
 import { useAuth } from "../../context/AuthContext";
 import markerImage from "../../assets/images/user-marker.gif";
-import { FaMapMarkerAlt, FaRegCheckCircle } from "react-icons/fa";
+import { FaMapMarkerAlt, FaRegCheckCircle, FaTimes } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -197,6 +197,11 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
     });
   };
 
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSuggestions([]);
+  };
+
   useEffect(() => {
     if (
       userLocation &&
@@ -241,6 +246,11 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
+        {searchQuery && (
+          <button className="clear-button" onClick={handleClearSearch}>
+            <FaTimes />
+          </button>
+        )}
         {suggestions.length > 0 && (
           <ul className="suggestions-list">
             {suggestions.map((suggestion) => (

@@ -72,6 +72,21 @@
     box-sizing: border-box;
 }
 
+.clear-button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.clear-button:hover {
+    color: #000;
+}
+
 .suggestions-list {
     position: absolute;
     top: 100%;
