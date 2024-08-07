@@ -129,7 +129,7 @@ const Address = ({ onNext }) => {
       state: parsedAddress.state,
       latitude: location.latitude,
       longitude: location.longitude,
-      userId: userId, // Ensure userId is set
+      userId: userId,
     }));
     setShowLocationModal(false);
     setShowForm(true);
