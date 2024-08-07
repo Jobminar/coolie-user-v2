@@ -3,10 +3,17 @@ import mapboxgl from "mapbox-gl";
 import "./LocationModal.css";
 import { useAuth } from "../../context/AuthContext";
 import markerImage from "../../assets/images/user-marker.gif";
-import { FaMapMarkerAlt, FaRegCheckCircle, FaTimes } from "react-icons/fa";
+import { FaMapMarkerAlt, FaRegCheckCircle } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 
+// Mapbox access token
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+
+// Mappls credentials
+const mapplsClientId =
+  "96dHZVzsAuvNFqtguKmRirhneQi6jwDqKHqxRSBj_DBjzGXdYFul00yumGZ59tvS6Vnj8OuT38L5AOnHZcyqS2cO0odIYqS2";
+const mapplsClientSecret =
+  "lrFxI-iSEg-i8-yYnoCqxRsgvMU-6gtmEhtqBq2orhyONiT6NyhTED2nW_vCxid4hm3Tl1bqq3Cf8u-BNMaBrWg7vkG5lnvPQUV6SsvqY9M=";
 
 const LocationModal = ({ onLocationSelect, onClose }) => {
   const { userLocation, userCity } = useAuth();
@@ -28,11 +35,11 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
   const fetchAddress = async (latitude, longitude) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${mapboxgl.accessToken}&types=address,poi,neighborhood,place,locality`,
+        `https://apis.mappls.com/advancedmaps/v1/${mapplsClientId}/rev_geocode?lat=${latitude}&lng=${longitude}&client_id=${mapplsClientId}&client_secret=${mapplsClientSecret}`,
       );
       const data = await response.json();
-      if (data.features.length > 0) {
-        return data.features[0].place_name;
+      if (data.results.length > 0) {
+        return data.results[0].formatted_address;
       }
       return "Unknown location";
     } catch (error) {
@@ -49,14 +56,14 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
 
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${mapboxgl.accessToken}&autocomplete=true&types=address,poi,neighborhood,place,locality`,
+        `https://apis.mappls.com/advancedmaps/v1/${mapplsClientId}/place_search?query=${query}&client_id=${mapplsClientId}&client_secret=${mapplsClientSecret}`,
       );
       const data = await response.json();
-      if (data.features.length > 0) {
-        const cityFiltered = data.features.filter(
+      if (data.suggestedLocations.length > 0) {
+        const cityFiltered = data.suggestedLocations.filter(
           (feature) =>
-            feature.place_name.toUpperCase().includes(query.toUpperCase()) &&
-            feature.place_name.toUpperCase().includes(userCity.toUpperCase()),
+            feature.placeName.toUpperCase().includes(query.toUpperCase()) &&
+            feature.placeName.toUpperCase().includes(userCity.toUpperCase()),
         );
         setSuggestions(cityFiltered);
       } else {
@@ -183,23 +190,24 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
   };
 
   const handleSuggestionClick = async (suggestion) => {
-    const [longitude, latitude] = suggestion.center;
-    setTempLocation({ latitude, longitude });
-    setSearchQuery(suggestion.place_name);
+    const [longitude, latitude] = suggestion.coordinates.split(",");
+    setTempLocation({
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    });
+    setSearchQuery(suggestion.placeName);
     setSuggestions([]);
-    reloadMap(latitude, longitude);
-    const fetchedAddress = await fetchAddress(latitude, longitude);
+    reloadMap(parseFloat(latitude), parseFloat(longitude));
+    const fetchedAddress = await fetchAddress(
+      parseFloat(latitude),
+      parseFloat(longitude),
+    );
     onLocationSelect({
       address: fetchedAddress,
       city: userCity,
-      latitude,
-      longitude,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
     });
-  };
-
-  const handleClearSearch = () => {
-    setSearchQuery("");
-    setSuggestions([]);
   };
 
   useEffect(() => {
@@ -246,11 +254,6 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        {searchQuery && (
-          <button className="clear-button" onClick={handleClearSearch}>
-            <FaTimes />
-          </button>
-        )}
         {suggestions.length > 0 && (
           <ul className="suggestions-list">
             {suggestions.map((suggestion) => (
@@ -258,7 +261,7 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
                 key={suggestion.id}
                 onClick={() => handleSuggestionClick(suggestion)}
               >
-                {suggestion.place_name}
+                {suggestion.placeName}
               </li>
             ))}
           </ul>
