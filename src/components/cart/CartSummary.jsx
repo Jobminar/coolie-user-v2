@@ -6,46 +6,22 @@ import Address from "./Address";
 import Schedule from "./Schedule";
 import Checkout from "./Checkout";
 import "./CartSummary.css";
-// import cartIcon from "../../assets/images/cart.svg";
 import cartIconActive from "../../assets/images/cart-active.svg";
-// import locationMarker from "../../assets/images/marker.svg";
 import locationMarkerActive from "../../assets/images/location-marker-active.svg";
-// import calendarIcon from "../../assets/images/calender.svg";
 import calendarIconActive from "../../assets/images/calender-active.svg";
-// import checkoutIcon from "../../assets/images/checkout.svg";
 import checkoutIconActive from "../../assets/images/checkout-active.svg";
-// import arrowIcon from "../../assets/images/Arrows.svg";
 import arrowIconActive from "../../assets/images/Arrows-active.svg";
 import { OrdersProvider } from "../../context/OrdersContext";
-import { toast } from "react-hot-toast";
+import LoginComponent from "../LoginComponent";
 
 const CartSummary = ({ fullWidth }) => {
-  const { cartItems, totalItems } = useContext(CartContext); // Access totalItems from CartContext
+  const { cartItems, totalItems } = useContext(CartContext);
   const { isAuthenticated } = useContext(AuthContext);
   const [activeTabs, setActiveTabs] = useState(["cart"]);
   const [error, setError] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
 
   const initialRender = useRef(true);
-  const activeTabsRef = useRef(activeTabs);
-  const errorRef = useRef(error);
-
-  useEffect(() => {
-    try {
-      const savedActiveTabs = localStorage.getItem("activeTabs");
-      if (savedActiveTabs) {
-        setActiveTabs(JSON.parse(savedActiveTabs));
-        activeTabsRef.current = JSON.parse(savedActiveTabs);
-      }
-    } catch (err) {
-      console.error("Failed to retrieve active tabs from localStorage:", err);
-    }
-
-    const savedError = localStorage.getItem("error");
-    if (savedError) {
-      setError(JSON.parse(savedError));
-      errorRef.current = JSON.parse(savedError);
-    }
-  }, []);
 
   useEffect(() => {
     if (initialRender.current) {
@@ -53,26 +29,14 @@ const CartSummary = ({ fullWidth }) => {
       return;
     }
 
-    try {
-      localStorage.setItem("activeTabs", JSON.stringify(activeTabs));
-      activeTabsRef.current = activeTabs;
-    } catch (err) {
-      console.error("Failed to save active tabs to localStorage:", err);
+    if (!isAuthenticated) {
+      setActiveTabs(["cart"]); // Reset active tabs when the user logs out
     }
-  }, [activeTabs]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("error", JSON.stringify(error));
-      errorRef.current = error;
-    } catch (err) {
-      console.error("Failed to save error to localStorage:", err);
-    }
-  }, [error]);
+  }, [isAuthenticated]);
 
   const handleNextStep = (nextTab) => {
     if (!isAuthenticated) {
-      toast.error("Please log in to proceed.");
+      setShowLogin(true); // Show the login component if not authenticated
       return;
     }
 
@@ -110,99 +74,122 @@ const CartSummary = ({ fullWidth }) => {
     );
   };
 
+  const closeModal = () => {
+    setShowLogin(false);
+  };
+
   return (
     <OrdersProvider activeTab={activeTabs[activeTabs.length - 1]}>
       <div className={`cart-summary ${fullWidth ? "full-width" : ""}`}>
         {error && <div className="error-message">{error}</div>}
-        <div className="cart-steps-container">
-          <div className="cart-steps">
-            <div
-              className={`step ${activeTabs.includes("cart") ? "active" : ""} ${
-                isCompleted("cart") ? "completed" : ""
-              }`}
-              onClick={() => handleNextStep("cart")}
-              style={{ backgroundColor: "transparent" }}
-            >
-              <div className="icon-container">
-                <img
-                  src={cartIconActive}
-                  alt="Cart"
-                  className={
-                    !isCompleted("cart") && !activeTabs.includes("cart")
-                      ? "unprocessed"
-                      : ""
-                  }
-                />
-                {totalItems > 0 && <span className="badge">{totalItems}</span>}
-              </div>
-              <span>Cart</span>
-            </div>
-            <img src={arrowIconActive} alt="Arrow" className="arrow-icon" />
-            <div
-              className={`step ${
-                activeTabs.includes("address") ? "active" : ""
-              } ${isCompleted("address") ? "completed" : ""}`}
-              onClick={() => handleNextStep("address")}
-              style={{ backgroundColor: "transparent" }}
-            >
-              <div className="icon-container">
-                <img
-                  src={locationMarkerActive}
-                  alt="Address"
-                  className={
-                    !isCompleted("address") && !activeTabs.includes("address")
-                      ? "unprocessed"
-                      : ""
-                  }
-                />
-              </div>
-              <span>Address</span>
-            </div>
-            <img src={arrowIconActive} alt="Arrow" className="arrow-icon" />
-            <div
-              className={`step ${
-                activeTabs.includes("schedule") ? "active" : ""
-              } ${isCompleted("schedule") ? "completed" : ""}`}
-              onClick={() => handleNextStep("schedule")}
-              style={{ backgroundColor: "transparent" }}
-            >
-              <div className="icon-container">
-                <img
-                  src={calendarIconActive}
-                  alt="Schedule"
-                  className={
-                    !isCompleted("schedule") && !activeTabs.includes("schedule")
-                      ? "unprocessed"
-                      : ""
-                  }
-                />
-              </div>
-              <span>Schedule</span>
-            </div>
-            <img src={arrowIconActive} alt="Arrow" className="arrow-icon" />
-            <div
-              className={`step ${
-                activeTabs.includes("checkout") ? "active" : ""
-              } ${isCompleted("checkout") ? "completed" : ""}`}
-              onClick={() => handleNextStep("checkout")}
-              style={{ backgroundColor: "transparent" }}
-            >
-              <div className="icon-container">
-                <img
-                  src={checkoutIconActive}
-                  alt="Checkout"
-                  className={
-                    !isCompleted("checkout") && !activeTabs.includes("checkout")
-                      ? "unprocessed"
-                      : ""
-                  }
-                />
-              </div>
-              <span>Checkout</span>
+        {showLogin && (
+          <div className="modalOverlay" onClick={closeModal}>
+            <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+              <button className="close-button" onClick={closeModal}>
+                &times;
+              </button>
+              <LoginComponent onLoginSuccess={closeModal} />
             </div>
           </div>
-        </div>
-        {renderActiveComponent()}
+        )}
+        {!showLogin && (
+          <>
+            <div className="cart-steps-container">
+              <div className="cart-steps">
+                <div
+                  className={`step ${
+                    activeTabs.includes("cart") ? "active" : ""
+                  } ${isCompleted("cart") ? "completed" : ""}`}
+                  onClick={() => handleNextStep("cart")}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  <div className="icon-container">
+                    <img
+                      src={cartIconActive}
+                      alt="Cart"
+                      className={
+                        !isCompleted("cart") && !activeTabs.includes("cart")
+                          ? "unprocessed"
+                          : ""
+                      }
+                    />
+                    {totalItems > 0 && (
+                      <span className="badge">{totalItems}</span>
+                    )}
+                  </div>
+                  <span>Cart</span>
+                </div>
+                <img src={arrowIconActive} alt="Arrow" className="arrow-icon" />
+                <div
+                  className={`step ${
+                    activeTabs.includes("address") ? "active" : ""
+                  } ${isCompleted("address") ? "completed" : ""}`}
+                  onClick={() => handleNextStep("address")}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  <div className="icon-container">
+                    <img
+                      src={locationMarkerActive}
+                      alt="Address"
+                      className={
+                        !isCompleted("address") &&
+                        !activeTabs.includes("address")
+                          ? "unprocessed"
+                          : ""
+                      }
+                    />
+                  </div>
+                  <span>Address</span>
+                </div>
+                <img src={arrowIconActive} alt="Arrow" className="arrow-icon" />
+                <div
+                  className={`step ${
+                    activeTabs.includes("schedule") ? "active" : ""
+                  } ${isCompleted("schedule") ? "completed" : ""}`}
+                  onClick={() => handleNextStep("schedule")}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  <div className="icon-container">
+                    <img
+                      src={calendarIconActive}
+                      alt="Schedule"
+                      className={
+                        !isCompleted("schedule") &&
+                        !activeTabs.includes("schedule")
+                          ? "unprocessed"
+                          : ""
+                      }
+                    />
+                  </div>
+                  <span>Schedule</span>
+                </div>
+                <img src={arrowIconActive} alt="Arrow" className="arrow-icon" />
+                <div
+                  className={`step ${
+                    activeTabs.includes("checkout") ? "active" : ""
+                  } ${isCompleted("checkout") ? "completed" : ""}`}
+                  onClick={() => handleNextStep("checkout")}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  <div className="icon-container">
+                    <img
+                      src={checkoutIconActive}
+                      alt="Checkout"
+                      className={
+                        !isCompleted("checkout") &&
+                        !activeTabs.includes("checkout")
+                          ? "unprocessed"
+                          : ""
+                      }
+                    />
+                  </div>
+                  <span>Checkout</span>
+                </div>
+              </div>
+            </div>
+            {renderActiveComponent()}
+          </>
+        )}
       </div>
     </OrdersProvider>
   );
