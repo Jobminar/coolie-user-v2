@@ -1,4 +1,3 @@
-// Routing.js
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -35,6 +34,8 @@ const Routing = () => {
         <CategoryProvider>
           <MessagingProvider>
             <OrdersProvider>
+              {" "}
+              {/* Wrap your application with MessagingProvider */}
               <Router>
                 <Header />
                 <Routes>

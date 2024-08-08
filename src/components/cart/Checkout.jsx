@@ -40,6 +40,8 @@ const Checkout = ({ onFinalize }) => {
       return;
     }
 
+    const phoneNumber = user?.phone || sessionStorage.getItem("phone") || ""; // Fetch phone from user context or session storage
+
     const options = {
       key: RazorKey, // Use the environment variable
       amount: totalPrice * 100, // Amount in paise
@@ -59,9 +61,9 @@ const Checkout = ({ onFinalize }) => {
       prefill: {
         name: user?.name || "",
         email: user?.email || "",
-        contact: user?.phone || sessionStorage.getItem("phone") || "", // Fetch phone from user context or session storage
+        contact: phoneNumber, // Set phone number
         method: "upi", // Prefill UPI with phone number
-        vpa: `${user?.phone}@upi`,
+        vpa: `${phoneNumber}@upi`, // Set UPI ID
       },
       notes: {
         address: user?.address || "",

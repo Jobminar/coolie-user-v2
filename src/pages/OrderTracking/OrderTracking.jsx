@@ -1,27 +1,16 @@
-// OrderTracking.js
 import React, { useEffect, useState, useContext } from "react";
 import ProviderTracking from "./ProviderTracking";
 import WorkerInfo from "./WorkerInfo";
 import Timer from "./Timer";
-import { Toaster, toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { useLocation } from "react-router-dom";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 import "./OrderTracking.css";
 import LoadingPage from "./LoadingPage";
-import { MessagingContext } from "../../context/MessagingContext";
+import { useMessaging } from "../../context/MessagingContext";
 
 const OrderTracking = () => {
-  const [orderAccepted, setOrderAccepted] = useState(false);
-  const { messageRef } = useContext(MessagingContext);
-
-  useEffect(() => {
-    const checkOrderStatus = () => {
-      if (messageRef.current.data.orderId) {
-        setOrderAccepted(true);
-      }
-    };
-
-    checkOrderStatus();
-  }, [messageRef]);
-
   const worker = {
     image: "https://via.placeholder.com/150",
     name: "Anil",
@@ -30,21 +19,31 @@ const OrderTracking = () => {
     reviews: 531,
   };
 
+  const location = useLocation();
+  const { messageRef } = useMessaging();
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    const scrollToCenter = () => {
-      const orderTrackingElement = document.querySelector(".order-tracking");
-      const { height } = orderTrackingElement.getBoundingClientRect();
-      const centerY = (height - window.innerHeight) / 2;
-      window.scrollTo(0, centerY);
+    const params = new URLSearchParams(location.search);
+    if (params.get("orderCreated") === "true") {
+      confirmAlert({
+        title: "Order Created",
+        message:
+          "We will come back to you once a service provider accepts the service.",
+        buttons: [{ label: "OK", onClick: () => {} }],
+      });
+    }
+
+    const checkMessage = () => {
+      if (messageRef.current) {
+        setIsLoading(false);
+      }
     };
 
-    scrollToCenter();
-    window.addEventListener("resize", scrollToCenter);
+    const interval = setInterval(checkMessage, 1000); // Check every second
 
-    return () => {
-      window.removeEventListener("resize", scrollToCenter);
-    };
-  }, []);
+    return () => clearInterval(interval);
+  }, [location, messageRef]);
 
   const handleCall = () => {
     toast(
@@ -83,33 +82,31 @@ const OrderTracking = () => {
     console.log("Booking canceled.");
   };
 
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
   return (
     <div className="order-tracking">
-      {!orderAccepted ? (
-        <LoadingPage />
-      ) : (
-        <div className="order-details">
-          <ProviderTracking />
-          <div className="info-container">
-            <Timer />
-            <hr
-              id="info-dividing-line"
-              style={{
-                backgroundColor: "#444",
-                height: "1px",
-                border: "none",
-                margin: "10px 0",
-              }}
-            />
-            <WorkerInfo
-              worker={worker}
-              onCall={handleCall}
-              onCancel={handleCancel}
-            />
-          </div>
-          <Toaster />
-        </div>
-      )}
+      <ProviderTracking />
+      <div className="info-container">
+        <Timer />
+        <hr
+          id="info-dividing-line"
+          style={{
+            backgroundColor: "#444",
+            height: "1px",
+            border: "none",
+            margin: "10px 0",
+          }}
+        />
+        <WorkerInfo
+          worker={worker}
+          onCall={handleCall}
+          onCancel={handleCancel}
+        />
+      </div>
+      <Toaster />
     </div>
   );
 };

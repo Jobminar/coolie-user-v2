@@ -16,12 +16,19 @@ import LoginComponent from "../LoginComponent";
 
 const CartSummary = ({ fullWidth }) => {
   const { cartItems, totalItems } = useContext(CartContext);
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
   const [activeTabs, setActiveTabs] = useState(["cart"]);
   const [error, setError] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
 
   const initialRender = useRef(true);
+  const isAuthenticatedRef = useRef(isAuthenticated);
+  const userRef = useRef(user);
+
+  useEffect(() => {
+    isAuthenticatedRef.current = isAuthenticated;
+    userRef.current = user;
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     if (initialRender.current) {
@@ -29,13 +36,13 @@ const CartSummary = ({ fullWidth }) => {
       return;
     }
 
-    if (!isAuthenticated) {
+    if (!isAuthenticatedRef.current) {
       setActiveTabs(["cart"]); // Reset active tabs when the user logs out
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticatedRef.current]);
 
   const handleNextStep = (nextTab) => {
-    if (!isAuthenticated) {
+    if (!isAuthenticatedRef.current) {
       setShowLogin(true); // Show the login component if not authenticated
       return;
     }
