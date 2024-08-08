@@ -1,9 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import ProviderTracking from "./ProviderTracking";
 import WorkerInfo from "./WorkerInfo";
 import Timer from "./Timer";
-import { Toaster, toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { useLocation } from "react-router-dom";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 import "./OrderTracking.css";
+import LoadingPage from "./LoadingPage";
+import { useMessaging } from "../../context/MessagingContext";
 
 const OrderTracking = () => {
   const worker = {
@@ -14,23 +19,31 @@ const OrderTracking = () => {
     reviews: 531,
   };
 
+  const location = useLocation();
+  const { messageRef } = useMessaging();
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    // Center the scroll position in the viewport height
-    const scrollToCenter = () => {
-      const orderTrackingElement = document.querySelector(".order-tracking");
-      const { height } = orderTrackingElement.getBoundingClientRect();
-      const centerY = (height - window.innerHeight) / 2;
-      window.scrollTo(0, centerY);
+    const params = new URLSearchParams(location.search);
+    if (params.get("orderCreated") === "true") {
+      confirmAlert({
+        title: "Order Created",
+        message:
+          "We will come back to you once a service provider accepts the service.",
+        buttons: [{ label: "OK", onClick: () => {} }],
+      });
+    }
+
+    const checkMessage = () => {
+      if (messageRef.current) {
+        setIsLoading(false);
+      }
     };
 
-    scrollToCenter();
-    window.addEventListener("resize", scrollToCenter);
+    const interval = setInterval(checkMessage, 1000); // Check every second
 
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", scrollToCenter);
-    };
-  }, []);
+    return () => clearInterval(interval);
+  }, [location, messageRef]);
 
   const handleCall = () => {
     toast(
@@ -68,6 +81,10 @@ const OrderTracking = () => {
     });
     console.log("Booking canceled.");
   };
+
+  if (isLoading) {
+    return <LoadingPage />;
+  }
 
   return (
     <div className="order-tracking">

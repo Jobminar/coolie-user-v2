@@ -17,18 +17,7 @@ export const useMessaging = () => useContext(MessagingContext);
 export const MessagingProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
-  const messageRef = useRef({
-    from: "",
-    notification: {
-      title: "",
-      body: "",
-    },
-    data: {
-      orderId: "",
-      providerDetails: "",
-      otp: "",
-    },
-  });
+  const messageRef = useRef(null);
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");

@@ -1,4 +1,3 @@
-// AuthContext.js
 import React, {
   createContext,
   useState,
@@ -22,7 +21,7 @@ export const AuthProvider = ({ children }) => {
   const [googleUser, setGoogleUser] = useState(null);
   const [timeoutId, setTimeoutId] = useState(null);
   const [captchaVerified, setCaptchaVerified] = useState(false);
-  const [userId, setUserId] = useState(null);
+  const userIdRef = useRef(null); // Using useRef to persist userId
   const [userCity, setUserCity] = useState(
     sessionStorage.getItem("selectedCity") || null,
   );
@@ -109,7 +108,7 @@ export const AuthProvider = ({ children }) => {
     const storedJwtToken = sessionStorage.getItem("jwtToken");
     const storedUserId = sessionStorage.getItem("userId");
     const storedExpirationTime = sessionStorage.getItem("expirationTime");
-    setUserId(storedUserId);
+    userIdRef.current = storedUserId; // Store userId in ref
     if (storedJwtToken && storedUserId && storedExpirationTime) {
       const currentTime = Date.now();
 
@@ -199,6 +198,7 @@ export const AuthProvider = ({ children }) => {
         setSessionTimeout(60 * 60 * 1000);
         setUser(data.user);
         setIsAuthenticated(true);
+        userIdRef.current = data.user._id; // Store userId in ref
         toast.success("Login successful.");
 
         console.log("User location:", userLocation);
@@ -306,6 +306,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        userId: userIdRef.current, // Provide userId from ref
         userLocation,
         userCity,
         fetchCityName,

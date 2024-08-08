@@ -4,25 +4,32 @@ import React, {
   useEffect,
   useContext,
   useRef,
+  useMemo,
 } from "react";
 import { CartContext } from "./CartContext";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { useAuth } from "./AuthContext";
 import { useMessaging } from "./MessagingContext";
+import { onMessage } from "firebase/messaging";
+import { messaging } from "../config/firebase";
 
 export const OrdersContext = createContext();
 
-export const OrdersProvider = ({ children, activeTab }) => {
+export const OrdersProvider = ({ children }) => {
   const { cartItems } = useContext(CartContext);
-  const { user } = useAuth();
-  const { token, sendNotification } = useMessaging();
+  const { user, userId } = useAuth(); // Get userId from useAuth
+  const { token, sendNotification, messageRef } = useMessaging();
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [orderDetails, setOrderDetails] = useState([]);
   const [categoryIds, setCategoryIds] = useState([]);
   const [subCategoryIds, setSubCategoryIds] = useState([]);
   const orderDataRef = useRef([]);
   const hasMountedRef = useRef(false);
+  const [loading, setLoading] = useState(false);
+  const [orderCreated, setOrderCreated] = useState(false);
+
+  const userIdMemo = useMemo(() => userId, [userId]); // Memoize userId
 
   const updateOrderDetails = (updatedDetails) => {
     setOrderDetails(updatedDetails);
@@ -52,6 +59,7 @@ export const OrdersProvider = ({ children, activeTab }) => {
   };
 
   const updateSelectedAddressId = (addressId) => {
+    console.log("Setting selected address ID:", addressId);
     setSelectedAddressId(addressId);
   };
 
@@ -71,12 +79,36 @@ export const OrdersProvider = ({ children, activeTab }) => {
     console.log("Selected AddressId:", selectedAddressId);
     console.log("Order Details:", orderDetails);
 
-    if (!selectedAddressId || !orderDetails.length || !user?._id) {
-      console.error("Missing address, cart items, or user information");
+    if (!selectedAddressId) {
+      console.error("Missing address");
+      confirmAlert({
+        title: "Error",
+        message: "Missing address",
+        buttons: [{ label: "OK" }],
+      });
       return;
     }
 
-    // Extracting items from orderDetails, removing the cartItems wrapper
+    if (!orderDetails.length) {
+      console.error("Missing cart items");
+      confirmAlert({
+        title: "Error",
+        message: "Missing cart items",
+        buttons: [{ label: "OK" }],
+      });
+      return;
+    }
+
+    if (!userIdMemo) {
+      console.error("Missing user information");
+      confirmAlert({
+        title: "Error",
+        message: "Missing user information",
+        buttons: [{ label: "OK" }],
+      });
+      return;
+    }
+
     const items = orderDetails.flatMap((cart) =>
       cart.items.map((item) => ({
         ...item,
@@ -84,24 +116,28 @@ export const OrdersProvider = ({ children, activeTab }) => {
       })),
     );
 
+    const phoneNumber = user?.phoneNumber || "0000000000"; // Default to a placeholder if phone number is missing
+    const upiId = `${phoneNumber}@upi`; // Format the UPI ID
+
     const orderData = {
-      userId: user._id,
+      userId: userIdMemo,
       addressId: selectedAddressId,
       categoryIds: categoryIds,
       subCategoryIds: subCategoryIds,
       items: items,
-      paymentId,
+      paymentId: `${upiId}`, // Include the UPI ID
     };
 
     console.log("Order Data:", orderData);
 
     try {
-      // Log FCM token before creating order
       if (token) {
         console.log("FCM Token:", token);
       } else {
         console.log("No FCM Token available");
       }
+
+      setLoading(true);
 
       const response = await fetch(
         "https://api.coolieno1.in/v1.0/users/order/create-order",
@@ -123,22 +159,28 @@ export const OrdersProvider = ({ children, activeTab }) => {
           body: "Your order has been made and looking for service providers.",
         });
 
-        confirmAlert({
-          title: "Order Created",
-          message:
-            "We will comeback to you once a service provider accepts the service.",
-          buttons: [
-            {
-              label: "OK",
-              onClick: () => {},
-            },
-          ],
-        });
+        setLoading(false);
+        setOrderCreated(true);
+
+        // Set a URL parameter to trigger the alert on the order tracking page
+        window.location.href = "/ordertracking?orderCreated=true";
       } else {
         console.error("Failed to create order:", response.statusText);
+        confirmAlert({
+          title: "Error",
+          message: `Failed to create order: ${response.statusText}`,
+          buttons: [{ label: "OK" }],
+        });
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error creating order:", error);
+      confirmAlert({
+        title: "Error",
+        message: `Error creating order: ${error.message}`,
+        buttons: [{ label: "OK" }],
+      });
+      setLoading(false);
     }
   };
 
@@ -170,6 +212,24 @@ export const OrdersProvider = ({ children, activeTab }) => {
     hasMountedRef.current = true;
   }, [cartItems]);
 
+  useEffect(() => {
+    const handleBackendMessage = (payload) => {
+      console.log("Message received from backend:", payload);
+      if (payload.notification && payload.data.orderId) {
+        messageRef.current = payload;
+        confirmAlert({
+          title: "Your request for the order has been received by Task Tigers",
+          message: `${payload.notification.body}\n\nOrder ID: ${payload.data.orderId}`,
+          buttons: [{ label: "OK" }],
+        });
+        // Set a URL parameter to trigger the alert on the order tracking page
+        window.location.href = "/ordertracking?orderCreated=true";
+      }
+    };
+
+    onMessage(messaging, handleBackendMessage);
+  }, [messageRef]);
+
   return (
     <OrdersContext.Provider
       value={{
@@ -183,6 +243,8 @@ export const OrdersProvider = ({ children, activeTab }) => {
         createOrder,
         categoryIds,
         subCategoryIds,
+        loading,
+        orderCreated,
       }}
     >
       {children}
