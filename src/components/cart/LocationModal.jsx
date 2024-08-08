@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { SearchBox } from "@mapbox/search-js-react";
 import mapboxgl from "mapbox-gl";
 import "./LocationModal.css";
 import { useAuth } from "../../context/AuthContext";
@@ -18,7 +19,9 @@ const mapplsClientSecret =
 const LocationModal = ({ onLocationSelect, onClose }) => {
   const { userLocation, userCity } = useAuth();
   const mapContainerRef = useRef(null);
-  const [map, setMap] = useState(null);
+  const mapInstanceRef = useRef(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [inputValue, setInputValue] = useState("");
   const [marker, setMarker] = useState(null);
   const [popup, setPopup] = useState(null);
   const [zoom, setZoom] = useState(12);
@@ -29,8 +32,6 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
     latitude: parseFloat(sessionStorage.getItem("markedLat")) || 0,
     longitude: parseFloat(sessionStorage.getItem("markedLng")) || 0,
   });
-  const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
 
   const fetchAddress = async (latitude, longitude) => {
     try {
@@ -45,33 +46,6 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
     } catch (error) {
       console.error("Failed to fetch address:", error);
       return "Error fetching address";
-    }
-  };
-
-  const fetchSuggestions = async (query) => {
-    if (!query) {
-      setSuggestions([]);
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://apis.mappls.com/advancedmaps/v1/${mapplsClientId}/place_search?query=${query}&client_id=${mapplsClientId}&client_secret=${mapplsClientSecret}`,
-      );
-      const data = await response.json();
-      if (data.suggestedLocations.length > 0) {
-        const cityFiltered = data.suggestedLocations.filter(
-          (feature) =>
-            feature.placeName.toUpperCase().includes(query.toUpperCase()) &&
-            feature.placeName.toUpperCase().includes(userCity.toUpperCase()),
-        );
-        setSuggestions(cityFiltered);
-      } else {
-        setSuggestions([]);
-      }
-    } catch (error) {
-      console.error("Failed to fetch suggestions:", error);
-      setSuggestions([]);
     }
   };
 
@@ -90,7 +64,7 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
     const newPopup = new mapboxgl.Popup({ closeOnClick: true })
       .setLngLat([longitude, latitude])
       .setHTML(`<p><strong>Address:</strong> ${fetchedAddress}</p>`)
-      .addTo(map);
+      .addTo(mapInstanceRef.current);
     setPopup(newPopup);
     sessionStorage.setItem("markedLat", latitude);
     sessionStorage.setItem("markedLng", longitude);
@@ -120,12 +94,15 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
   };
 
   const reloadMap = async (latitude, longitude) => {
-    if (map) {
-      map.flyTo({
+    console.log(`Reloading map to: ${latitude}, ${longitude}`);
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.flyTo({
         center: [longitude, latitude],
         essential: true,
       });
-      marker.setLngLat([longitude, latitude]);
+      if (marker) {
+        marker.setLngLat([longitude, latitude]);
+      }
     } else {
       const newMap = new mapboxgl.Map({
         container: mapContainerRef.current,
@@ -135,7 +112,7 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
       });
 
       newMap.on("load", async () => {
-        setMap(newMap);
+        setMapLoaded(true);
         setMapLoading(false);
 
         const newMarker = new mapboxgl.Marker({
@@ -158,7 +135,6 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
         });
 
         setMarker(newMarker);
-
         await updateLocation(latitude, longitude);
       });
 
@@ -167,7 +143,9 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
         const latitude = e.lngLat.lat;
         setTempLocation({ latitude, longitude });
 
-        newMarker.setLngLat([longitude, latitude]);
+        if (marker) {
+          marker.setLngLat([longitude, latitude]);
+        }
         await updateLocation(latitude, longitude);
       });
 
@@ -186,22 +164,50 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
         setTempLocation({ latitude, longitude });
         reloadMap(latitude, longitude);
       });
+
+      mapInstanceRef.current = newMap;
     }
   };
 
-  const handleSuggestionClick = async (suggestion) => {
-    const [longitude, latitude] = suggestion.coordinates.split(",");
-    setTempLocation({
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
-    });
-    setSearchQuery(suggestion.placeName);
-    setSuggestions([]);
-    reloadMap(parseFloat(latitude), parseFloat(longitude));
-    const fetchedAddress = await fetchAddress(
-      parseFloat(latitude),
-      parseFloat(longitude),
-    );
+  const handleRetrieve = async (result) => {
+    const [longitude, latitude] = result.geometry.coordinates;
+    setTempLocation({ latitude, longitude });
+    const fetchedAddress = await fetchAddress(latitude, longitude);
+    setAddress(fetchedAddress);
+    console.log(`Search result selected: ${latitude}, ${longitude}`);
+
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.flyTo({
+        center: [longitude, latitude],
+        zoom: 15, // Maximum zoom level for better visibility
+        essential: true,
+      });
+
+      if (marker) {
+        marker.setLngLat([longitude, latitude]);
+      } else {
+        const newMarker = new mapboxgl.Marker({
+          draggable: true,
+          element: document.createElement("div"),
+        })
+          .setLngLat([longitude, latitude])
+          .addTo(mapInstanceRef.current);
+
+        const markerElement = newMarker.getElement();
+        markerElement.style.backgroundImage = `url(${markerImage})`;
+        markerElement.style.width = "50px";
+        markerElement.style.height = "50px";
+        markerElement.style.backgroundSize = "100%";
+
+        newMarker.on("dragend", async () => {
+          const lngLat = newMarker.getLngLat();
+          setTempLocation({ latitude: lngLat.lat, longitude: lngLat.lng });
+          await updateLocation(lngLat.lat, lngLat.lng);
+        });
+
+        setMarker(newMarker);
+      }
+    }
     onLocationSelect({
       address: fetchedAddress,
       city: userCity,
@@ -223,16 +229,6 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
     }
   }, [userLocation, tempLocation.latitude, tempLocation.longitude]);
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (searchQuery.length >= 1) {
-        fetchSuggestions(searchQuery);
-      }
-    }, 50); // Reduced delay for faster updates
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
-
   return (
     <div className="location-container">
       {loading && (
@@ -248,24 +244,18 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
         </div>
       )}
       <div className="search-container">
-        <input
-          type="text"
-          placeholder="Search for a location"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+        <SearchBox
+          accessToken={mapboxgl.accessToken}
+          map={mapInstanceRef.current}
+          mapboxgl={mapboxgl}
+          value={inputValue}
+          onChange={(d) => {
+            setInputValue(d);
+          }}
+          onRetrieve={handleRetrieve}
+          placeholder="Search for a location (e.g., address, POI, neighborhood)"
+          marker={false} // Disable built-in marker to use custom marker
         />
-        {suggestions.length > 0 && (
-          <ul className="suggestions-list">
-            {suggestions.map((suggestion) => (
-              <li
-                key={suggestion.id}
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                {suggestion.placeName}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
       <div id="map" className="map-container" ref={mapContainerRef}>
         {mapLoading && <div className="loading-message">Loading map...</div>}
