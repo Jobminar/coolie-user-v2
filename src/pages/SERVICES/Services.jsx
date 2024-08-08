@@ -8,6 +8,32 @@ import { CartContext } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import LoginComponent from "../../components/LoginComponent";
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state so the next render shows the fallback UI
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // You can also log the error to an error reporting service
+    console.error("ErrorBoundary caught an error", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <h1>Something went wrong.</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+
 const Services = () => {
   const {
     categoryData,
@@ -171,85 +197,87 @@ const Services = () => {
   }, [servicesData, selectedSubCategoryId, variantName]);
 
   return (
-    <div className="services">
-      <ScrollableTabs />
-      <div>
-        {filteredCategoryData.map((uiItem) => {
-          const validVariants = uiItem.uiVariant.filter(
-            (variant) => variant.toLowerCase() !== "none",
-          );
-          return (
-            <div key={uiItem._id} className="variant">
-              {validVariants.length > 0 &&
-                validVariants.map((variant, index) => (
-                  <div
-                    key={index}
-                    className={`ui-variant-item ${
-                      variant === variantName ? "active" : ""
-                    }`}
-                    onClick={() => handleVariant(variant)}
-                  >
-                    {variant}
-                  </div>
-                ))}
-            </div>
-          );
-        })}
-      </div>
+    <ErrorBoundary>
+      <div className="services">
+        <ScrollableTabs />
+        <div>
+          {filteredCategoryData.map((uiItem) => {
+            const validVariants = uiItem.uiVariant.filter(
+              (variant) => variant.toLowerCase() !== "none",
+            );
+            return (
+              <div key={uiItem._id} className="variant">
+                {validVariants.length > 0 &&
+                  validVariants.map((variant, index) => (
+                    <div
+                      key={index}
+                      className={`ui-variant-item ${
+                        variant === variantName ? "active" : ""
+                      }`}
+                      onClick={() => handleVariant(variant)}
+                    >
+                      {variant}
+                    </div>
+                  ))}
+              </div>
+            );
+          })}
+        </div>
 
-      <div className="services-cart-display">
-        <div className="subcat-services-dispaly">
-          <div className="sub-category-display">
-            {subCategoryData && subCategoryData.length > 0 ? (
-              subCategoryData.map((subCat) => (
-                <div
-                  key={subCat._id}
-                  className={`sub-category-item ${
-                    selectedSubCategoryId === subCat._id ? "active" : ""
-                  }`}
-                  onClick={() => setSelectedSubCategoryId(subCat._id)}
-                >
+        <div className="services-cart-display">
+          <div className="subcat-services-dispaly">
+            <div className="sub-category-display">
+              {subCategoryData && subCategoryData.length > 0 ? (
+                subCategoryData.map((subCat) => (
                   <div
-                    className={`subcat-icon-container ${
+                    key={subCat._id}
+                    className={`sub-category-item ${
                       selectedSubCategoryId === subCat._id ? "active" : ""
                     }`}
+                    onClick={() => setSelectedSubCategoryId(subCat._id)}
                   >
-                    <img
-                      src={subCat.imageKey}
-                      alt={subCat.name}
-                      className="tab-image"
-                    />
+                    <div
+                      className={`subcat-icon-container ${
+                        selectedSubCategoryId === subCat._id ? "active" : ""
+                      }`}
+                    >
+                      <img
+                        src={subCat.imageKey}
+                        alt={subCat.name}
+                        className="tab-image"
+                      />
+                    </div>
+                    <p
+                      className={
+                        selectedSubCategoryId === subCat._id ? "active" : ""
+                      }
+                    >
+                      {subCat.name}
+                    </p>
                   </div>
-                  <p
-                    className={
-                      selectedSubCategoryId === subCat._id ? "active" : ""
-                    }
-                  >
-                    {subCat.name}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p>No additional subcategories available.</p>
-            )}
+                ))
+              ) : (
+                <p>No additional subcategories available.</p>
+              )}
+            </div>
+            <div className="services-display">
+              {displayServices(filteredServiceData)}
+            </div>
           </div>
-          <div className="services-display">
-            {displayServices(filteredServiceData)}
-          </div>
+          <CartSummary />
         </div>
-        <CartSummary />
+        {isLoginVisible && (
+          <div className="modalOverlay" onClick={closeModal}>
+            <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+              <button className="close-button" onClick={closeModal}>
+                &times;
+              </button>
+              <LoginComponent onLoginSuccess={closeModal} />
+            </div>
+          </div>
+        )}
       </div>
-      {isLoginVisible && (
-        <div className="modalOverlay" onClick={closeModal}>
-          <div className="modalContent" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button" onClick={closeModal}>
-              &times;
-            </button>
-            <LoginComponent onLoginSuccess={closeModal} />
-          </div>
-        </div>
-      )}
-    </div>
+    </ErrorBoundary>
   );
 };
 

@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave } from "@fortawesome/free-solid-svg-icons"; // Import the save icon
-import { toast } from "react-toastify"; // Import toast for error messages
+import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
-const AddressForm = ({ addressData, setAddressData, handleSaveAddress }) => {
+const AddressForm = ({
+  addressData,
+  setAddressData,
+  handleSaveAddress,
+  onCancel,
+}) => {
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -42,6 +47,29 @@ const AddressForm = ({ addressData, setAddressData, handleSaveAddress }) => {
 
   return (
     <div className="address-form">
+      <div className="address-radio-group">
+        <p>Contact:</p>
+        <label>
+          <input
+            type="radio"
+            name="bookingType"
+            value="self"
+            checked={addressData.bookingType === "self"}
+            onChange={handleChange}
+          />
+          <h4>My Self</h4>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="bookingType"
+            value="others"
+            checked={addressData.bookingType === "others"}
+            onChange={handleChange}
+          />
+          <h4>Booking for Others</h4>
+        </label>
+      </div>
       <div className="form-row">
         <input
           type="text"
@@ -66,29 +94,40 @@ const AddressForm = ({ addressData, setAddressData, handleSaveAddress }) => {
           <span className="error-message">{errors.mobileNumber}</span>
         )}
       </div>
-      <input
-        type="text"
-        name="address"
-        className={`full-width ${errors.address ? "input-error" : ""}`}
-        placeholder="Address (House#, Street)"
-        value={addressData.address}
-        onChange={handleChange}
-        title={errors.address}
-      />
-      {errors.address && (
-        <span className="error-message">{errors.address}</span>
-      )}
+      <div className="form-row">
+        <input
+          type="text"
+          name="address"
+          className={`full-width ${errors.address ? "input-error" : ""}`}
+          placeholder="Address (House#, Street)"
+          value={addressData.address}
+          onChange={handleChange}
+          title={errors.address}
+        />
+        {errors.address && (
+          <span className="error-message">{errors.address}</span>
+        )}
+      </div>
       <div className="form-row">
         <input
           type="text"
           name="city"
-          placeholder="City / Dist"
+          placeholder="City"
           value={addressData.city}
           onChange={handleChange}
           title={errors.city}
           className={errors.city ? "input-error" : ""}
         />
         {errors.city && <span className="error-message">{errors.city}</span>}
+        <input
+          type="text"
+          name="landmark"
+          placeholder="Landmark"
+          value={addressData.landmark}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="form-row">
         <input
           type="text"
           name="pincode"
@@ -101,15 +140,6 @@ const AddressForm = ({ addressData, setAddressData, handleSaveAddress }) => {
         {errors.pincode && (
           <span className="error-message">{errors.pincode}</span>
         )}
-      </div>
-      <div className="form-row">
-        <input
-          type="text"
-          name="landmark"
-          placeholder="Landmark (Optional)"
-          value={addressData.landmark}
-          onChange={handleChange}
-        />
         <input
           type="text"
           name="state"
@@ -121,9 +151,14 @@ const AddressForm = ({ addressData, setAddressData, handleSaveAddress }) => {
         />
         {errors.state && <span className="error-message">{errors.state}</span>}
       </div>
-      <button className="save-address-btn" onClick={handleSave}>
-        <FontAwesomeIcon icon={faSave} /> <span>SAVE ADDRESS</span>
-      </button>
+      <div className="address-button-group">
+        <button className="save-address-btn" onClick={handleSave}>
+          <FontAwesomeIcon icon={faSave} /> <span>SAVE ADDRESS</span>
+        </button>
+        <button className="cancel-address-btn" onClick={onCancel}>
+          <FontAwesomeIcon icon={faTimes} /> <span>CANCEL</span>
+        </button>
+      </div>
     </div>
   );
 };

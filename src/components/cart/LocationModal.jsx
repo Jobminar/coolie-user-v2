@@ -1,55 +1,45 @@
 import React, { useState, useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
-import "./LocationModal.css"; // Ensure to create appropriate styles
-import { useAuth } from "../../context/AuthContext"; // Import the AuthContext
-import markerImage from "../../assets/images/user-marker.gif"; // Import the marker image
-import {
-  FaMapMarkerAlt,
-  FaRegCheckCircle,
-  FaTimesCircle,
-} from "react-icons/fa"; // Import icons
-import { confirmAlert } from "react-confirm-alert";
-import "react-confirm-alert/src/react-confirm-alert.css"; // Import react-confirm-alert CSS
-import { TailSpin } from "react-loader-spinner"; // Import TailSpin from react-loader-spinner
+import "./LocationModal.css";
+import { useAuth } from "../../context/AuthContext";
+import markerImage from "../../assets/images/user-marker.gif";
+import { FaMapMarkerAlt, FaRegCheckCircle } from "react-icons/fa";
+import { TailSpin } from "react-loader-spinner";
 
-// Set your Mapbox access token from environment variables using Vite's method
+// Mapbox access token
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-const LocationModal = ({
-  onClose,
-  onLocationSelect,
-  lat,
-  lng,
-  initializeMap,
-}) => {
-  const { userLocation } = useAuth(); // Get userLocation from context
-  const mapContainerRef = useRef(null); // Reference to the map container
+// Mappls credentials
+const mapplsClientId =
+  "96dHZVzsAuvNFqtguKmRirhneQi6jwDqKHqxRSBj_DBjzGXdYFul00yumGZ59tvS6Vnj8OuT38L5AOnHZcyqS2cO0odIYqS2";
+const mapplsClientSecret =
+  "lrFxI-iSEg-i8-yYnoCqxRsgvMU-6gtmEhtqBq2orhyONiT6NyhTED2nW_vCxid4hm3Tl1bqq3Cf8u-BNMaBrWg7vkG5lnvPQUV6SsvqY9M=";
+
+const LocationModal = ({ onLocationSelect, onClose }) => {
+  const { userLocation, userCity } = useAuth();
+  const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
-  const [popup, setPopup] = useState(null); // State to manage the popup
-  const currentLngRef = useRef(
-    parseFloat(sessionStorage.getItem("markedLng")) || lng,
-  );
-  const currentLatRef = useRef(
-    parseFloat(sessionStorage.getItem("markedLat")) || lat,
-  );
-  const [zoom, setZoom] = useState(12); // Adjusted zoom level for better initial focus
+  const [popup, setPopup] = useState(null);
+  const [zoom, setZoom] = useState(12);
   const [address, setAddress] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state to manage API calls
-  const [mapLoading, setMapLoading] = useState(true); // State to check if map has loaded
+  const [loading, setLoading] = useState(false);
+  const [mapLoading, setMapLoading] = useState(true);
   const [tempLocation, setTempLocation] = useState({
-    latitude: currentLatRef.current,
-    longitude: currentLngRef.current,
+    latitude: parseFloat(sessionStorage.getItem("markedLat")) || 0,
+    longitude: parseFloat(sessionStorage.getItem("markedLng")) || 0,
   });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
 
   const fetchAddress = async (latitude, longitude) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${mapboxgl.accessToken}`,
+        `https://apis.mappls.com/advancedmaps/v1/${mapplsClientId}/rev_geocode?lat=${latitude}&lng=${longitude}&client_id=${mapplsClientId}&client_secret=${mapplsClientSecret}`,
       );
       const data = await response.json();
-      if (data.features.length > 0) {
-        return data.features[0].place_name;
+      if (data.results.length > 0) {
+        return data.results[0].formatted_address;
       }
       return "Unknown location";
     } catch (error) {
@@ -58,86 +48,75 @@ const LocationModal = ({
     }
   };
 
+  const fetchSuggestions = async (query) => {
+    if (!query) {
+      setSuggestions([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://apis.mappls.com/advancedmaps/v1/${mapplsClientId}/place_search?query=${query}&client_id=${mapplsClientId}&client_secret=${mapplsClientSecret}`,
+      );
+      const data = await response.json();
+      if (data.suggestedLocations.length > 0) {
+        const cityFiltered = data.suggestedLocations.filter(
+          (feature) =>
+            feature.placeName.toUpperCase().includes(query.toUpperCase()) &&
+            feature.placeName.toUpperCase().includes(userCity.toUpperCase()),
+        );
+        setSuggestions(cityFiltered);
+      } else {
+        setSuggestions([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch suggestions:", error);
+      setSuggestions([]);
+    }
+  };
+
   const updateLocation = async (latitude, longitude) => {
     const fetchedAddress = await fetchAddress(latitude, longitude);
     setAddress(fetchedAddress);
   };
 
-  const handleUseCurrentLocation = async () => {
-    confirmAlert({
-      title: "Confirm Location",
-      message: "Do you want to proceed with this location?",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: async () => {
-            const { latitude, longitude } = userLocation;
-            setLoading(true);
-            setTempLocation({ latitude, longitude });
-            sessionStorage.removeItem("markedLat");
-            sessionStorage.removeItem("markedLng");
-            currentLatRef.current = latitude;
-            currentLngRef.current = longitude;
-            await reloadMap(latitude, longitude);
-            await updateLocation(latitude, longitude);
-            onLocationSelect({
-              address,
-              city: "Current City",
-              pincode: "00000",
-              state: "Current State",
-              latitude,
-              longitude,
-            });
-            setLoading(false);
-          },
-        },
-        {
-          label: "No",
-        },
-      ],
+  const handleUseMarkedLocation = async () => {
+    const { latitude, longitude } = tempLocation;
+    if (popup) {
+      popup.remove();
+    }
+    setLoading(true);
+    const fetchedAddress = await fetchAddress(latitude, longitude);
+    const newPopup = new mapboxgl.Popup({ closeOnClick: true })
+      .setLngLat([longitude, latitude])
+      .setHTML(`<p><strong>Address:</strong> ${fetchedAddress}</p>`)
+      .addTo(map);
+    setPopup(newPopup);
+    sessionStorage.setItem("markedLat", latitude);
+    sessionStorage.setItem("markedLng", longitude);
+    onLocationSelect({
+      address: fetchedAddress,
+      city: userCity,
+      latitude,
+      longitude,
     });
+    setAddress(fetchedAddress);
+    setLoading(false);
   };
 
-  const handleUseMarkedLocation = async () => {
-    confirmAlert({
-      title: "Confirm Location",
-      message: "Do you want to proceed with this location?",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: async () => {
-            const { latitude, longitude } = tempLocation;
-            if (popup) {
-              popup.remove(); // Remove any existing popup
-            }
-            setLoading(true);
-            const fetchedAddress = await fetchAddress(latitude, longitude);
-            const newPopup = new mapboxgl.Popup({ closeOnClick: true })
-              .setLngLat([longitude, latitude])
-              .setHTML(`<p><strong>Address:</strong> ${fetchedAddress}</p>`)
-              .addTo(map);
-            setPopup(newPopup); // Set the new popup to state
-            sessionStorage.setItem("markedLat", latitude);
-            sessionStorage.setItem("markedLng", longitude);
-            currentLngRef.current = longitude;
-            currentLatRef.current = latitude;
-            onLocationSelect({
-              address: fetchedAddress,
-              city: "Marked City",
-              pincode: "00000",
-              state: "Marked State",
-              latitude,
-              longitude,
-            });
-            setAddress(fetchedAddress);
-            setLoading(false);
-          },
-        },
-        {
-          label: "No",
-        },
-      ],
-    });
+  const handleUseCurrentLocation = async () => {
+    if (userLocation) {
+      const { latitude, longitude } = userLocation;
+      setTempLocation({ latitude, longitude });
+      reloadMap(latitude, longitude);
+      const fetchedAddress = await fetchAddress(latitude, longitude);
+      onLocationSelect({
+        address: fetchedAddress,
+        city: userCity,
+        latitude,
+        longitude,
+      });
+    }
   };
 
   const reloadMap = async (latitude, longitude) => {
@@ -150,14 +129,14 @@ const LocationModal = ({
     } else {
       const newMap = new mapboxgl.Map({
         container: mapContainerRef.current,
-        style: "mapbox://styles/mapbox/streets-v11", // Mapbox street style map
+        style: "mapbox://styles/mapbox/streets-v11",
         center: [longitude, latitude],
         zoom: zoom,
       });
 
       newMap.on("load", async () => {
         setMap(newMap);
-        setMapLoading(false); // Map has finished loading
+        setMapLoading(false);
 
         const newMarker = new mapboxgl.Marker({
           draggable: true,
@@ -191,98 +170,132 @@ const LocationModal = ({
         newMarker.setLngLat([longitude, latitude]);
         await updateLocation(latitude, longitude);
       });
+
+      const geolocateControl = new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+        showUserLocation: true,
+      });
+
+      newMap.addControl(geolocateControl);
+
+      geolocateControl.on("geolocate", (e) => {
+        const { latitude, longitude } = e.coords;
+        setTempLocation({ latitude, longitude });
+        reloadMap(latitude, longitude);
+      });
     }
   };
 
-  useEffect(() => {
-    if (initializeMap) {
-      if (currentLatRef.current === 0 && currentLngRef.current === 0) {
-        if (userLocation) {
-          const { latitude, longitude } = userLocation;
-          reloadMap(latitude, longitude);
-        }
-      } else {
-        reloadMap(currentLatRef.current, currentLngRef.current);
-      }
-    }
-  }, [initializeMap, userLocation]);
+  const handleSuggestionClick = async (suggestion) => {
+    const [longitude, latitude] = suggestion.coordinates.split(",");
+    setTempLocation({
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    });
+    setSearchQuery(suggestion.placeName);
+    setSuggestions([]);
+    reloadMap(parseFloat(latitude), parseFloat(longitude));
+    const fetchedAddress = await fetchAddress(
+      parseFloat(latitude),
+      parseFloat(longitude),
+    );
+    onLocationSelect({
+      address: fetchedAddress,
+      city: userCity,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    });
+  };
 
   useEffect(() => {
-    if (userLocation) {
-      updateLocation(userLocation.latitude, userLocation.longitude);
+    if (
+      userLocation &&
+      tempLocation.latitude === 0 &&
+      tempLocation.longitude === 0
+    ) {
+      const { latitude, longitude } = userLocation;
+      reloadMap(latitude, longitude);
+    } else if (tempLocation.latitude !== 0 && tempLocation.longitude !== 0) {
+      reloadMap(tempLocation.latitude, tempLocation.longitude);
     }
-  }, [userLocation]);
+  }, [userLocation, tempLocation.latitude, tempLocation.longitude]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchQuery.length >= 1) {
+        fetchSuggestions(searchQuery);
+      }
+    }, 50); // Reduced delay for faster updates
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
 
   return (
-    <div className="location-modal">
-      <div className="modal-content">
-        {loading && (
-          <div className="loading-overlay">
-            <TailSpin
-              height="80"
-              width="80"
-              color="#0988cf"
-              ariaLabel="tail-spin-loading"
-              radius="1"
-              visible={true}
-            />
-          </div>
-        )}
-        <div className="header">
-          <div className="location-info">
-            <p>
-              <strong>Address:</strong> {address}
-            </p>
-            <p>
-              <strong>Latitude:</strong> {currentLatRef.current}
-            </p>
-            <p>
-              <strong>Longitude:</strong> {currentLngRef.current}
-            </p>
-          </div>
-          <button onClick={() => onClose()} className="close-button">
-            <FaTimesCircle />
-          </button>
+    <div className="location-container">
+      {loading && (
+        <div className="loading-overlay">
+          <TailSpin
+            height="80"
+            width="80"
+            color="#0988cf"
+            ariaLabel="tail-spin-loading"
+            radius="1"
+            visible={true}
+          />
         </div>
-        <div className="body">
-          <div className="instructions">
-            <p>
-              <strong>Welcome!</strong> You can use this map to set your
-              location. Drag the marker to your desired location or click on the
-              map to place the marker. You can also use your current location or
-              the marked location.
-            </p>
-            <p>
-              <strong>Use Current Location:</strong> This will reset the marker
-              to your current location as detected by your device.
-            </p>
-            <p>
-              <strong>Use Marked Location:</strong> This will use the location
-              set by the marker on the map.
-            </p>
-            <div className="location-buttons">
-              <button
-                onClick={handleUseCurrentLocation}
-                className="use-location-button"
-                disabled={loading}
+      )}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search for a location"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        {suggestions.length > 0 && (
+          <ul className="suggestions-list">
+            {suggestions.map((suggestion) => (
+              <li
+                key={suggestion.id}
+                onClick={() => handleSuggestionClick(suggestion)}
               >
-                <FaMapMarkerAlt /> Use Current Location
-              </button>
-              <button
-                onClick={handleUseMarkedLocation}
-                className="use-location-button"
-                disabled={loading}
-              >
-                <FaRegCheckCircle /> Use Marked Location
-              </button>
-            </div>
-          </div>
-
-          <div id="map" className="map-container" ref={mapContainerRef}>
-            {mapLoading && (
-              <div className="loading-message">Loading map...</div>
-            )}
-          </div>
+                {suggestion.placeName}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div id="map" className="map-container" ref={mapContainerRef}>
+        {mapLoading && <div className="loading-message">Loading map...</div>}
+      </div>
+      <div className="instructions">
+        <div className="location-info">
+          <p>
+            <strong>Address:</strong> {address}
+          </p>
+        </div>
+        <p className="location-description">
+          <strong>Welcome!</strong> You can use this map to set your location.
+          Drag the marker to your desired location or click on the map to place
+          the marker. Use the marked location to proceed.
+        </p>
+        <div className="location-buttons">
+          <button
+            onClick={handleUseMarkedLocation}
+            className="use-location-button"
+            disabled={loading}
+          >
+            <FaRegCheckCircle /> Use Marked Location
+          </button>
+          <button
+            onClick={handleUseCurrentLocation}
+            className="use-location-button"
+            disabled={loading}
+          >
+            <FaMapMarkerAlt /> Use Current Location
+          </button>
         </div>
       </div>
     </div>

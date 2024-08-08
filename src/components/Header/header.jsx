@@ -1,4 +1,3 @@
-// Header.jsx
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -15,11 +14,10 @@ import LoginComponent from "../LoginComponent";
 import ChatbotComponent from "../Chat/ChatbotComponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-import Userprofile from "../../pages/USER-PROFILE/user-profile";
-import account from '../../assets/images/account.png'
-import addresses from '../../assets/images/myaddresses.png'
-import bookings from '../../assets/images/mybookings.png'
-import logout from '../../assets/images/logout.png';
+import account from "../../assets/images/account.png";
+import addresses from "../../assets/images/myaddresses.png";
+import bookings from "../../assets/images/mybookings.png";
+import logout from "../../assets/images/logout.png";
 import CitySearchComponent from "./CitySearchComponent";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -41,9 +39,12 @@ const useTypewriter = (texts, speed = 100, pause = 2000) => {
       return;
     }
 
-    const timeout = setTimeout(() => {
-      setSubIndex((prev) => prev + (deleting ? -1 : 1));
-    }, deleting ? speed / 2 : speed);
+    const timeout = setTimeout(
+      () => {
+        setSubIndex((prev) => prev + (deleting ? -1 : 1));
+      },
+      deleting ? speed / 2 : speed,
+    );
 
     return () => clearTimeout(timeout);
   }, [subIndex, deleting, index, texts, speed, pause]);
@@ -53,12 +54,15 @@ const useTypewriter = (texts, speed = 100, pause = 2000) => {
     : texts[index].substring(0, subIndex);
 };
 
-
 const Header = ({ children }) => {
   const navigate = useNavigate();
-  const { isAuthenticated, userCity, fetchCityName, updateUserLocation } =
-    useAuth();
-    const { logout } = useAuth(); 
+  const {
+    isAuthenticated,
+    userCity,
+    fetchCityName,
+    updateUserLocation,
+    logout,
+  } = useAuth();
   const { totalItems } = useContext(CartContext);
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
@@ -85,7 +89,7 @@ const Header = ({ children }) => {
   const placeholders = [
     " Room cleaning, kitchen cleaning",
     " Laundry, dishwashing",
-    " Gardening, pet sitting"
+    " Gardening, pet sitting",
   ];
 
   const placeholder = useTypewriter(placeholders);
@@ -112,6 +116,10 @@ const Header = ({ children }) => {
 
   const handleCartClick = () => {
     navigate("/cart");
+  };
+
+  const handleLogoClick = () => {
+    navigate("/");
   };
 
   const handleCitySelect = (city) => {
@@ -215,9 +223,19 @@ const Header = ({ children }) => {
               {isProfileMenuVisible && (
                 <div className="profileMenu">
                   <div className="profile-list">Account</div>
-                  <div className="profile-list"  onClick={() => {navigate("/addresses")}}>My Addresses</div>
-                  <div className="profile-list" onClick={() => navigate("/bookings")}>My Bookings</div>
-                  <div className="profile-list" >Log Out</div>
+                  <div
+                    className="profile-list"
+                    onClick={() => navigate("/addresses")}
+                  >
+                    My Addresses
+                  </div>
+                  <div
+                    className="profile-list"
+                    onClick={() => navigate("/bookings")}
+                  >
+                    My Bookings
+                  </div>
+                  <div className="profile-list">Log Out</div>
                 </div>
               )}
             </div>
@@ -225,7 +243,7 @@ const Header = ({ children }) => {
         </div>
         <div className="s-h">
           <div className="s-h-logo">
-            <img src={logo} alt="logo" onClick={(navigate('/'))}/>
+            <img src={logo} alt="logo" onClick={handleLogoClick} />
           </div>
           <div className="s-h-s">
             <div className="location">

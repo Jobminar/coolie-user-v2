@@ -59,7 +59,7 @@ const Checkout = ({ onFinalize }) => {
       prefill: {
         name: user?.name || "",
         email: user?.email || "",
-        contact: user?.phone || "",
+        contact: user?.phone || sessionStorage.getItem("phone") || "", // Fetch phone from user context or session storage
         method: "upi", // Prefill UPI with phone number
         vpa: `${user?.phone}@upi`,
       },
