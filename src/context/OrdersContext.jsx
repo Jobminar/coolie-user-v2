@@ -1,4 +1,3 @@
-// OrdersProvider.js
 import React, {
   createContext,
   useState,
@@ -11,7 +10,6 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { useAuth } from "./AuthContext";
 import { useMessaging } from "./MessagingContext";
-import LoadingPage from "../pages/OrderTracking/LoadingPage";
 import { onMessage } from "firebase/messaging";
 import { messaging } from "../config/firebase"; // Ensure correct import path
 
@@ -27,7 +25,6 @@ export const OrdersProvider = ({ children }) => {
   const [subCategoryIds, setSubCategoryIds] = useState([]);
   const orderDataRef = useRef([]);
   const hasMountedRef = useRef(false);
-  const [loading, setLoading] = useState(false);
   const [orderCreated, setOrderCreated] = useState(false);
 
   const updateOrderDetails = (updatedDetails) => {
@@ -79,6 +76,11 @@ export const OrdersProvider = ({ children }) => {
 
     if (!selectedAddressId || !orderDetails.length || !user?._id) {
       console.error("Missing address, cart items, or user information");
+      confirmAlert({
+        title: "Error",
+        message: "Missing address, cart items, or user information",
+        buttons: [{ label: "OK" }],
+      });
       return;
     }
 
@@ -107,8 +109,6 @@ export const OrdersProvider = ({ children }) => {
         console.log("No FCM Token available");
       }
 
-      setLoading(true);
-
       const response = await fetch(
         "https://api.coolieno1.in/v1.0/users/order/create-order",
         {
@@ -129,15 +129,29 @@ export const OrdersProvider = ({ children }) => {
           body: "Your order has been made and looking for service providers.",
         });
 
-        setLoading(false);
+        confirmAlert({
+          title: "Order Created",
+          message:
+            "Your order has been made and looking for service providers.",
+          buttons: [{ label: "OK" }],
+        });
+
         setOrderCreated(true);
       } else {
         console.error("Failed to create order:", response.statusText);
-        setLoading(false);
+        confirmAlert({
+          title: "Error",
+          message: "Failed to create order: " + response.statusText,
+          buttons: [{ label: "OK" }],
+        });
       }
     } catch (error) {
       console.error("Error creating order:", error);
-      setLoading(false);
+      confirmAlert({
+        title: "Error",
+        message: "Error creating order: " + error.message,
+        buttons: [{ label: "OK" }],
+      });
     }
   };
 
@@ -177,14 +191,8 @@ export const OrdersProvider = ({ children }) => {
         confirmAlert({
           title: payload.notification.title,
           message: `${payload.notification.body}\n\nOrder ID: ${payload.data.orderId}`,
-          buttons: [
-            {
-              label: "OK",
-              onClick: () => {},
-            },
-          ],
+          buttons: [{ label: "OK" }],
         });
-        setLoading(false);
       }
     };
 
@@ -207,7 +215,7 @@ export const OrdersProvider = ({ children }) => {
         orderCreated,
       }}
     >
-      {loading ? <LoadingPage /> : children}
+      {children}
     </OrdersContext.Provider>
   );
 };
