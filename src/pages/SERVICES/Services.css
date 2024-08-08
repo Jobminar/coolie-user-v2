@@ -325,7 +325,7 @@
 .ui-variant-item.active {
     background-color:white;
     color: #FFB800;
-    box-shadow: 0px 4px 4px 0px #00000040 inset;
+    box-shadow: 3px 3px 3px 3px #00000040 inset;
 
   }
   
