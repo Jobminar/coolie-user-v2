@@ -34,7 +34,7 @@
     display: grid;
     grid-template-columns: 20% 80%;
     align-items: center;
-    border-bottom: 1px dashed rgb(193, 193, 193);
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 20px -30px;
     padding-left: 25px;
     min-height: 4rem;
     position: relative;
@@ -54,8 +54,9 @@
     transform: translateY(-50%);
     width: 5px;
     height: 48px;
-    background-color: #c0e8b6;
+    background-color: rgba(190, 196, 91, 1);
     border-radius: 0 5px 5px 0;
+
 }
 
 .sub-category-item p {
@@ -69,7 +70,7 @@
 }
 
 .sub-category-item p.active {
-    color: #039f54;
+    color: rgb(162, 166, 84);
 }
 
 .subcat-services-dispaly {
@@ -118,7 +119,8 @@
 }
 
 .subcat-icon-container.active {
-    background: linear-gradient(180deg, #e6f7d4 0%, #c0e8b6 100%);
+    background: transparent;
+    background: linear-gradient(0deg, rgba(190, 196, 91, 1) 0%, rgba(255, 255, 255, 1)58%);
     transform: scale(1.4) translateY(-2%)
 }
 

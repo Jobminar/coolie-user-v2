@@ -13,16 +13,46 @@ const ScrollableTabs = () => {
   const [selectedCategoryIdLocal, setSelectedCategoryIdLocal] =
     useState(selectedCategoryId);
   const containerRef = useRef(null);
-  const tabWidth = 200;
-  const visibleTabs = 5;
   const buttonWidth = 70;
 
-  // Sync local state with global state
+  const getTabWidth = () => {
+    const containerWidth = containerRef.current
+      ? containerRef.current.offsetWidth
+      : window.innerWidth;
+    if (containerWidth >= 1789) return 250;
+    if (containerWidth >= 1200) return 200;
+    if (containerWidth >= 768) return 160;
+    return 128;
+  };
+
+  const getVisibleTabs = () => {
+    const containerWidth = containerRef.current
+      ? containerRef.current.offsetWidth
+      : window.innerWidth;
+    const tabWidth = getTabWidth();
+    return Math.floor((containerWidth - buttonWidth * 2) / tabWidth);
+  };
+
+  const visibleTabs = getVisibleTabs();
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newVisibleTabs = getVisibleTabs();
+      if (newVisibleTabs !== visibleTabs) {
+        setSelectedCategoryIdLocal(selectedCategoryId); // Trigger re-render on resize
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [selectedCategoryId, visibleTabs]);
+
   useEffect(() => {
     setSelectedCategoryIdLocal(selectedCategoryId);
   }, [selectedCategoryId]);
 
-  // Scroll to the selected tab
   useEffect(() => {
     if (selectedCategoryIdLocal && containerRef.current) {
       const selectedTab = document.getElementById(
@@ -44,39 +74,22 @@ const ScrollableTabs = () => {
   };
 
   const scrollLeft = () => {
+    const tabWidth = getTabWidth();
     if (containerRef.current) {
       containerRef.current.scrollBy({
         left: -tabWidth * visibleTabs,
         behavior: "smooth",
       });
-      setTimeout(() => {
-        if (containerRef.current.scrollLeft === 0) {
-          containerRef.current.scrollTo({
-            left: containerRef.current.scrollWidth / 3,
-            behavior: "instant",
-          });
-        }
-      }, 500);
     }
   };
 
   const scrollRight = () => {
+    const tabWidth = getTabWidth();
     if (containerRef.current) {
       containerRef.current.scrollBy({
         left: tabWidth * visibleTabs,
         behavior: "smooth",
       });
-      setTimeout(() => {
-        if (
-          containerRef.current.scrollLeft >=
-          containerRef.current.scrollWidth - containerRef.current.clientWidth
-        ) {
-          containerRef.current.scrollTo({
-            left: containerRef.current.scrollWidth / 3,
-            behavior: "instant",
-          });
-        }
-      }, 500);
     }
   };
 
@@ -88,7 +101,6 @@ const ScrollableTabs = () => {
     return <div>Loading...</div>;
   }
 
-  // Create a cloned list of tabs for circular scrolling
   const clonedTabs = [...categoryData, ...categoryData, ...categoryData];
 
   return (
@@ -99,7 +111,7 @@ const ScrollableTabs = () => {
       <div className="scrollable-tabs-container" ref={containerRef}>
         {clonedTabs.map((category, index) => (
           <div
-            key={index} // Use index as key because of duplicated items
+            key={index}
             id={`tab-${category._id}`}
             className={`scrollable-tab ${
               selectedCategoryIdLocal === category._id ? "selected" : ""

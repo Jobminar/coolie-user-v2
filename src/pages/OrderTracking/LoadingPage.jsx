@@ -8,7 +8,7 @@ const LoadingPage = () => {
       <div className="loading-content">
         <img src={SearchGif} alt="Searching for provider" />
         <h2>
-          Your Order has been made and Looking for a provider to accept
+          Your Order has been made and we are matching with a best provider
           <span className="dots">
             <span>.</span>
             <span>.</span>
