@@ -32,16 +32,17 @@ const Bookings = () => {
   return (
     <>
       <h2 className='bookings'>My Bookings</h2>
-      {bookingsData && Array.isArray(bookingsData) && bookingsData.length > 0 ? (
-        <div>
-          {bookingsData.map((booking, index) => (
-            <div key={index} className='book-sub-con'>
-                <p>{booking}</p>
+      {bookingsData && bookingsData.items && bookingsData.items.length > 0 ? (
+        
+        <div className='bookings-list'>
+          {bookingsData.items.map((item, index) => (
+            <div key={index} className='booking-item'>
+               <p>Name: {item.serviceId.name}</p>    
             </div>
           ))}
         </div>
       ) : (
-        <p>No bookings found.</p>
+        <p>No bookings found or loading bookings...</p>
       )}
     </>
   );
