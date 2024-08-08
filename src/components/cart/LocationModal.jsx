@@ -7,7 +7,14 @@ import markerImage from "../../assets/images/user-marker.gif";
 import { FaMapMarkerAlt, FaRegCheckCircle } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
 
+// Mapbox access token
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+
+// Mappls credentials
+const mapplsClientId =
+  "96dHZVzsAuvNFqtguKmRirhneQi6jwDqKHqxRSBj_DBjzGXdYFul00yumGZ59tvS6Vnj8OuT38L5AOnHZcyqS2cO0odIYqS2";
+const mapplsClientSecret =
+  "lrFxI-iSEg-i8-yYnoCqxRsgvMU-6gtmEhtqBq2orhyONiT6NyhTED2nW_vCxid4hm3Tl1bqq3Cf8u-BNMaBrWg7vkG5lnvPQUV6SsvqY9M=";
 
 const LocationModal = ({ onLocationSelect, onClose }) => {
   const { userLocation, userCity } = useAuth();
@@ -29,11 +36,11 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
   const fetchAddress = async (latitude, longitude) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${mapboxgl.accessToken}&types=address,poi,neighborhood,place,locality`,
+        `https://apis.mappls.com/advancedmaps/v1/${mapplsClientId}/rev_geocode?lat=${latitude}&lng=${longitude}&client_id=${mapplsClientId}&client_secret=${mapplsClientSecret}`,
       );
       const data = await response.json();
-      if (data.features.length > 0) {
-        return data.features[0].place_name;
+      if (data.results.length > 0) {
+        return data.results[0].formatted_address;
       }
       return "Unknown location";
     } catch (error) {
@@ -204,8 +211,8 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
     onLocationSelect({
       address: fetchedAddress,
       city: userCity,
-      latitude,
-      longitude,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
     });
   };
 

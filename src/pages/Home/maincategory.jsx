@@ -31,6 +31,7 @@ const Maincategory = () => {
   const handleCategory = (id) => {
     setSelectedCategoryId(id);
     navigate("/services");
+    
   };
 
   const NextArrow = (props) => {

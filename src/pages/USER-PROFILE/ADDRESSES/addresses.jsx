@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import './addresses.css'
 import rightarrow from '../../../assets/images/right-arrow.svg'
 import AddressForm from '../../../components/cart/AddressForm';
@@ -6,12 +7,13 @@ import Userprofileaddressform from './userprofileaddressform';
 
 
 const Addresses = () => {
+  const navigate = useNavigate()
   const [userId, setStoredUserId] = useState(null);
   const [addressData, setAddressesData] = useState([]);
   const [isAddressFormVisible, setIsAddressFormVisible] = useState(false);
 
   const handleAddAddressClick = () => {
-    setIsAddressFormVisible(!isAddressFormVisible);
+    navigate('/cart')
   };
 
   useEffect(() => {
