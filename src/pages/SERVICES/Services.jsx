@@ -130,7 +130,7 @@ const Services = () => {
               <h5>{service.name}</h5>
               <div>
                 {service.serviceVariants.map((variant) => (
-                  <div key={variant._id} className="service-variant">
+                  <div key={variant._id} className="service-levels">
                     <p>
                       ({variant.min} to {variant.max} {variant.metric})
                     </p>
