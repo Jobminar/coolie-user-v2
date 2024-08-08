@@ -1,11 +1,27 @@
-import React, { useEffect } from "react";
+// OrderTracking.js
+import React, { useEffect, useState, useContext } from "react";
 import ProviderTracking from "./ProviderTracking";
 import WorkerInfo from "./WorkerInfo";
 import Timer from "./Timer";
 import { Toaster, toast } from "react-hot-toast";
 import "./OrderTracking.css";
+import LoadingPage from "./LoadingPage";
+import { MessagingContext } from "../../context/MessagingContext";
 
 const OrderTracking = () => {
+  const [orderAccepted, setOrderAccepted] = useState(false);
+  const { messageRef } = useContext(MessagingContext);
+
+  useEffect(() => {
+    const checkOrderStatus = () => {
+      if (messageRef.current.data.orderId) {
+        setOrderAccepted(true);
+      }
+    };
+
+    checkOrderStatus();
+  }, [messageRef]);
+
   const worker = {
     image: "https://via.placeholder.com/150",
     name: "Anil",
@@ -15,7 +31,6 @@ const OrderTracking = () => {
   };
 
   useEffect(() => {
-    // Center the scroll position in the viewport height
     const scrollToCenter = () => {
       const orderTrackingElement = document.querySelector(".order-tracking");
       const { height } = orderTrackingElement.getBoundingClientRect();
@@ -26,7 +41,6 @@ const OrderTracking = () => {
     scrollToCenter();
     window.addEventListener("resize", scrollToCenter);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener("resize", scrollToCenter);
     };
@@ -71,25 +85,31 @@ const OrderTracking = () => {
 
   return (
     <div className="order-tracking">
-      <ProviderTracking />
-      <div className="info-container">
-        <Timer />
-        <hr
-          id="info-dividing-line"
-          style={{
-            backgroundColor: "#444",
-            height: "1px",
-            border: "none",
-            margin: "10px 0",
-          }}
-        />
-        <WorkerInfo
-          worker={worker}
-          onCall={handleCall}
-          onCancel={handleCancel}
-        />
-      </div>
-      <Toaster />
+      {!orderAccepted ? (
+        <LoadingPage />
+      ) : (
+        <div className="order-details">
+          <ProviderTracking />
+          <div className="info-container">
+            <Timer />
+            <hr
+              id="info-dividing-line"
+              style={{
+                backgroundColor: "#444",
+                height: "1px",
+                border: "none",
+                margin: "10px 0",
+              }}
+            />
+            <WorkerInfo
+              worker={worker}
+              onCall={handleCall}
+              onCancel={handleCancel}
+            />
+          </div>
+          <Toaster />
+        </div>
+      )}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+// Routing.js
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -34,8 +35,6 @@ const Routing = () => {
         <CategoryProvider>
           <MessagingProvider>
             <OrdersProvider>
-              {" "}
-              {/* Wrap your application with MessagingProvider */}
               <Router>
                 <Header />
                 <Routes>
@@ -54,7 +53,6 @@ const Routing = () => {
                     <Route path="/coupons" element={<Coupons />} />
                     <Route path="/rewards" element={<Rewards />} />
                     <Route path="/cart" element={<CartPage />} />
-                   
                   </Route>
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>

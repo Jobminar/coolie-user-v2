@@ -1,3 +1,4 @@
+// OrdersProvider.js
 import React, {
   createContext,
   useState,
@@ -10,19 +11,24 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { useAuth } from "./AuthContext";
 import { useMessaging } from "./MessagingContext";
+import LoadingPage from "../pages/OrderTracking/LoadingPage";
+import { onMessage } from "firebase/messaging";
+import { messaging } from "../config/firebase"; // Ensure correct import path
 
 export const OrdersContext = createContext();
 
-export const OrdersProvider = ({ children, activeTab }) => {
+export const OrdersProvider = ({ children }) => {
   const { cartItems } = useContext(CartContext);
   const { user } = useAuth();
-  const { token, sendNotification } = useMessaging();
+  const { token, sendNotification, messageRef } = useMessaging();
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [orderDetails, setOrderDetails] = useState([]);
   const [categoryIds, setCategoryIds] = useState([]);
   const [subCategoryIds, setSubCategoryIds] = useState([]);
   const orderDataRef = useRef([]);
   const hasMountedRef = useRef(false);
+  const [loading, setLoading] = useState(false);
+  const [orderCreated, setOrderCreated] = useState(false);
 
   const updateOrderDetails = (updatedDetails) => {
     setOrderDetails(updatedDetails);
@@ -76,7 +82,6 @@ export const OrdersProvider = ({ children, activeTab }) => {
       return;
     }
 
-    // Extracting items from orderDetails, removing the cartItems wrapper
     const items = orderDetails.flatMap((cart) =>
       cart.items.map((item) => ({
         ...item,
@@ -96,12 +101,13 @@ export const OrdersProvider = ({ children, activeTab }) => {
     console.log("Order Data:", orderData);
 
     try {
-      // Log FCM token before creating order
       if (token) {
         console.log("FCM Token:", token);
       } else {
         console.log("No FCM Token available");
       }
+
+      setLoading(true);
 
       const response = await fetch(
         "https://api.coolieno1.in/v1.0/users/order/create-order",
@@ -123,22 +129,15 @@ export const OrdersProvider = ({ children, activeTab }) => {
           body: "Your order has been made and looking for service providers.",
         });
 
-        confirmAlert({
-          title: "Order Created",
-          message:
-            "We will comeback to you once a service provider accepts the service.",
-          buttons: [
-            {
-              label: "OK",
-              onClick: () => {},
-            },
-          ],
-        });
+        setLoading(false);
+        setOrderCreated(true);
       } else {
         console.error("Failed to create order:", response.statusText);
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error creating order:", error);
+      setLoading(false);
     }
   };
 
@@ -170,6 +169,28 @@ export const OrdersProvider = ({ children, activeTab }) => {
     hasMountedRef.current = true;
   }, [cartItems]);
 
+  useEffect(() => {
+    const handleBackendMessage = (payload) => {
+      console.log("Message received from backend:", payload);
+      if (payload.notification && payload.data.orderId) {
+        messageRef.current = payload;
+        confirmAlert({
+          title: payload.notification.title,
+          message: `${payload.notification.body}\n\nOrder ID: ${payload.data.orderId}`,
+          buttons: [
+            {
+              label: "OK",
+              onClick: () => {},
+            },
+          ],
+        });
+        setLoading(false);
+      }
+    };
+
+    onMessage(messaging, handleBackendMessage);
+  }, []);
+
   return (
     <OrdersContext.Provider
       value={{
@@ -183,9 +204,10 @@ export const OrdersProvider = ({ children, activeTab }) => {
         createOrder,
         categoryIds,
         subCategoryIds,
+        orderCreated,
       }}
     >
-      {children}
+      {loading ? <LoadingPage /> : children}
     </OrdersContext.Provider>
   );
 };

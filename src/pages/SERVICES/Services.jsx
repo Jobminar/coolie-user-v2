@@ -1,3 +1,4 @@
+// Services.js
 import React, { useState, useContext, useEffect, useRef, useMemo } from "react";
 import "./Services.css";
 import ScrollableTabs from "./ScrollableTabs";
@@ -7,6 +8,8 @@ import CartSummary from "../../components/cart/CartSummary";
 import { CartContext } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import LoginComponent from "../../components/LoginComponent";
+import { useNavigate } from "react-router-dom";
+import { OrdersContext } from "../../context/OrdersContext";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -15,18 +18,15 @@ class ErrorBoundary extends React.Component {
   }
 
   static getDerivedStateFromError(error) {
-    // Update state so the next render shows the fallback UI
     return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
     console.error("ErrorBoundary caught an error", error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
       return <h1>Something went wrong.</h1>;
     }
 
@@ -47,12 +47,20 @@ const Services = () => {
 
   const { handleCart } = useContext(CartContext);
   const { isAuthenticated } = useAuth();
+  const { orderCreated } = useContext(OrdersContext);
+  const navigate = useNavigate();
 
   const [descriptionVisibility, setDescriptionVisibility] = useState({});
   const [isLoginVisible, setLoginVisible] = useState(false);
   const [variantName, setVariantName] = useState("");
 
   const initialCategoryRef = useRef(null);
+
+  useEffect(() => {
+    if (orderCreated) {
+      navigate("/ordertracking");
+    }
+  }, [orderCreated, navigate]);
 
   useEffect(() => {
     if (categoryData && categoryData.length > 0) {
@@ -67,7 +75,7 @@ const Services = () => {
         if (validVariants.length > 0) {
           setVariantName(validVariants[0]);
         } else {
-          setVariantName(""); // Reset variant name if no valid uiVariant exists
+          setVariantName("");
         }
       }
     }
