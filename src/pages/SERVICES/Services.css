@@ -121,10 +121,10 @@
 .subcat-icon-container.active {
     background-color: linear-gradient(0deg,
             rgba(190, 196, 91, 0.9) 0%,
-            rgba(255, 255, 255, 1) 58%);
+            rgba(255, 255, 255, 1) 88%);
     background: linear-gradient(0deg,
             rgba(190, 196, 91, 0.9) 0%,
-            rgba(255, 255, 255, 1) 58%);
+            rgba(255, 255, 255, 1) 88%);
     transform: scale(1.4) translateY(-2%);
 }
 
