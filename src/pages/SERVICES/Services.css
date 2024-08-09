@@ -119,10 +119,15 @@
 }
 
 .subcat-icon-container.active {
-
-    background: linear-gradient(0deg, rgba(190, 196, 91, 0.9) 0%, rgba(255, 255, 255, 1)58%);
-    transform: scale(1.4) translateY(-2%)
+    background-color: linear-gradient(0deg,
+            rgba(190, 196, 91, 0.9) 0%,
+            rgba(255, 255, 255, 1) 58%);
+    background: linear-gradient(0deg,
+            rgba(190, 196, 91, 0.9) 0%,
+            rgba(255, 255, 255, 1) 58%);
+    transform: scale(1.4) translateY(-2%);
 }
+
 
 /* sameer changed this 02-08-2024*/
 .subcat-icon-container img {
