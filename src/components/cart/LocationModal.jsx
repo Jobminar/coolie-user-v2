@@ -253,7 +253,7 @@ const LocationModal = ({ onLocationSelect, onClose }) => {
             setInputValue(d);
           }}
           onRetrieve={handleRetrieve}
-          placeholder="Search for a location (e.g., address, POI, neighborhood)"
+          placeholder="   Search for a location (e.g., address, POI, neighborhood)"
           marker={false} // Disable built-in marker to use custom marker
         />
       </div>
