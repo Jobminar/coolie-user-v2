@@ -5,16 +5,20 @@
 }
 
 .services-cart-display {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-    min-height: 20rem;
     display: grid;
+    /* Use grid display since you want grid columns */
     grid-template-columns: 60% 30%;
     justify-content: center;
-    margin: 0rem 1rem;
+    width: 90%;
+    min-height: 20rem;
+    margin: 0 auto;
+    /* Center horizontally */
     gap: 0.7rem;
+    transform: translateX(0);
+    margin-bottom: 1rem;
+    /* Remove the translateX */
 }
+
 
 .services-main-dispaly {
     display: grid;
